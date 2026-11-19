@@ -9,7 +9,7 @@ build = "build.rs"
 
 [dependencies]
 omsi-tools-core = { path = "../core" }
-slint = "1.19"
+slint = { version = "1.19", features = ["image-default-formats"] }
 rfd = "0.15"
 
 [build-dependencies]

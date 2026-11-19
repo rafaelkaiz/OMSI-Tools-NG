@@ -9,7 +9,7 @@ use omsi_tools_core::{Config, Source};
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let dir = |i: usize| args.get(i).filter(|s| !s.is_empty() && s.as_str() != "-").map(PathBuf::from);
-    let cfg = Config { omsi_dir: dir(0), neo_omsi_dir: dir(1), open_omsi_dir: dir(2), cleanup_dir: None };
+    let cfg = Config { omsi_dir: dir(0), neo_omsi_dir: dir(1), open_omsi_dir: dir(2), ..Default::default() };
     let dirs = cfg.game_dirs();
     let filter = args.get(3).map(|s| s.to_lowercase());
     let maps = list_maps(&dirs);

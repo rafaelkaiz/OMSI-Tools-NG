@@ -38,6 +38,8 @@ pub struct Config {
     pub open_omsi_dir: Option<PathBuf>,
     /// Folder unused content is moved into by the cleanup (instead of deleting it).
     pub cleanup_dir: Option<PathBuf>,
+    /// `Some(true)` dark, `Some(false)` light, `None` follow the system.
+    pub dark_theme: Option<bool>,
 }
 
 #[derive(Debug, thiserror::Error)]

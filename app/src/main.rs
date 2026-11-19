@@ -63,56 +63,99 @@ fn model<T: Clone + 'static>(v: Vec<T>) -> ModelRc<T> {
     ModelRc::from(Rc::new(VecModel::from(v)))
 }
 
-fn reload_maps(ui: &MainWindow, st: &mut State) {
-    st.maps = list_maps(&st.cfg.game_dirs());
-    let items: Vec<MapItem> = st
-        .maps
+fn load_picture(map: Option<&MapEntry>) -> Option<slint::Image> {
+    let dir = &map?.dir;
+    ["picture.jpg", "picture.jpeg", "picture.png", "picture.bmp"]
         .iter()
-        .map(|m| MapItem {
-            label: m.name.clone().into(),
-            source: format!("{} · {}", m.source, m.dir.file_name().unwrap_or_default().to_string_lossy()).into(),
-        })
-        .collect();
-    ui.set_maps(model(items));
-    ui.set_selected_map(-1);
+        .find_map(|n| omsi_tools_core::paths::resolve_existing(dir, n))
+        .and_then(|p| slint::Image::load_from_path(&p).ok())
 }
 
-fn result_rows(r: &ScanReport, show_found: bool) -> Vec<ResultRow> {
-    let mut rows = Vec::new();
-    for kind in FileKind::ALL {
-        let total = r.total_of(kind);
-        if total == 0 {
-            continue;
+fn show_picture(ui: &MainWindow, map: Option<&MapEntry>) {
+    match load_picture(map) {
+        Some(img) => {
+            ui.set_map_picture(img);
+            ui.set_has_picture(true);
         }
-        let missing = r.missing_of(kind).count();
-        rows.push(ResultRow {
-            header: true,
-            missing: missing > 0,
-            text: format!("{} — {} missing of {}", kind.label(), missing, total).into(),
-            detail: SharedString::new(),
-        });
-        for e in r.entries.iter().filter(|e| e.kind == kind) {
-            if !e.is_missing() && !show_found {
-                continue;
+        None => ui.set_has_picture(false),
+    }
+}
+
+/// Kinds shown in the overview and in tabs 1..=6.
+const TAB_KINDS: [FileKind; 6] = [
+    FileKind::Tile,
+    FileKind::Texture,
+    FileKind::Sceneryobject,
+    FileKind::Spline,
+    FileKind::Vehicle,
+    FileKind::Human,
+];
+
+fn clear_results(ui: &MainWindow) {
+    let rows = TAB_KINDS
+        .iter()
+        .map(|k| CountRow { name: k.label().into(), total: "–".into(), missing: "–".into(), bad: false })
+        .collect();
+    ui.set_counts(model(rows));
+    ui.set_tab_rows(model(vec![]));
+    ui.set_summary("".into());
+}
+
+fn reload_maps(ui: &MainWindow, st: &mut State) {
+    st.maps = list_maps(&st.cfg.game_dirs());
+    let names: Vec<SharedString> = st.maps.iter().map(|m| m.label().into()).collect();
+    ui.set_map_names(model(names));
+    st.report = None;
+    clear_results(ui);
+    ui.set_selected_map(if st.maps.is_empty() { -1 } else { 0 });
+    show_picture(ui, st.maps.first());
+}
+
+fn count_rows(r: &ScanReport) -> Vec<CountRow> {
+    TAB_KINDS
+        .iter()
+        .map(|&k| {
+            let missing = r.missing_of(k).count();
+            CountRow {
+                name: k.label().into(),
+                total: r.total_of(k).to_string().into(),
+                missing: missing.to_string().into(),
+                bad: missing > 0,
             }
-            let by = format!("referenced by: {}", e.referenced_by.join(", "));
-            let detail = match &e.found {
-                Some((src, _)) => format!("found in {src} · {by}"),
-                None => by,
-            };
+        })
+        .collect()
+}
+
+/// Rows of tab `tab` (1..=6 = one file kind, 7 = notes).
+fn tab_rows(r: &ScanReport, tab: i32, show_found: bool) -> Vec<ResultRow> {
+    let mut rows = Vec::new();
+    if tab == 7 {
+        for e in r.entries.iter().filter(|e| e.kind == FileKind::Unknown) {
             rows.push(ResultRow {
                 header: false,
                 missing: e.is_missing(),
                 text: e.path.clone().into(),
-                detail: detail.into(),
+                detail: format!("unknown file type · referenced by: {}", e.referenced_by.join(", ")).into(),
             });
         }
-    }
-    if !r.warnings.is_empty() {
-        rows.push(ResultRow { header: true, missing: false, text: format!("Warnings ({})", r.warnings.len()).into(), detail: SharedString::new() });
         for w in &r.warnings {
             rows.push(ResultRow { header: false, missing: false, text: w.clone().into(), detail: SharedString::new() });
         }
+        return rows;
+    }
+    let Some(&kind) = usize::try_from(tab - 1).ok().and_then(|i| TAB_KINDS.get(i)) else {
+        return rows;
+    };
+    for e in r.entries.iter().filter(|e| e.kind == kind) {
+        if !e.is_missing() && !show_found {
+            continue;
+        }
+        let by = format!("referenced by: {}", e.referenced_by.join(", "));
+        let detail = match &e.found {
+            Some((src, _)) => format!("found in {src} · {by}"),
+            None => by,
+        };
+        rows.push(ResultRow { header: false, missing: e.is_missing(), text: e.path.clone().into(), detail: detail.into() });
     }
     rows
 }
@@ -191,6 +234,9 @@ fn main() -> Result<(), slint::PlatformError> {
         ui.set_open_dir(path_str(&st.cfg.open_omsi_dir));
         ui.set_cleanup_dir(path_str(&st.cfg.cleanup_dir));
         ui.set_config_path(st.cfg_path.as_deref().map(Path::display).map(|d| d.to_string()).unwrap_or_default().into());
+        if let Some(d) = st.cfg.dark_theme {
+            ui.global::<Theme>().invoke_set_dark(d);
+        }
         ui.set_progress(0.0);
         ui.set_status(load_err.unwrap_or_default().into());
         if st.cfg.game_dirs().is_empty() {
@@ -219,8 +265,6 @@ fn main() -> Result<(), slint::PlatformError> {
             reload_maps(&ui, &mut st);
             st.report = None;
             st.cleanup = None;
-            ui.set_results(model(vec![]));
-            ui.set_summary("".into());
             ui.set_clean_rows(model(vec![]));
             ui.set_clean_summary("".into());
             ui.set_status(err.unwrap_or_else(|| "Settings saved.".into()).into());
@@ -260,7 +304,7 @@ fn main() -> Result<(), slint::PlatformError> {
             ui.set_busy(true);
             ui.set_progress(0.0);
             ui.set_summary("".into());
-            ui.set_results(model(vec![]));
+            clear_results(&ui);
             ui.set_status(format!("Scanning {} …", map.label()).into());
 
             let state = state.clone();
@@ -270,8 +314,8 @@ fn main() -> Result<(), slint::PlatformError> {
                 let report = scan_map(&dirs, &map, &cancel, &mut cb);
                 state.lock().unwrap().report = Some(report.clone());
                 on_ui(&w, move |ui| {
-                    let rows = result_rows(&report, ui.get_show_found());
-                    ui.set_results(model(rows));
+                    ui.set_counts(model(count_rows(&report)));
+                    ui.set_tab_rows(model(tab_rows(&report, ui.get_tab(), ui.get_show_found())));
                     ui.set_summary(summary_text(&report).into());
                     ui.set_progress(1.0);
                     ui.set_status(if report.cancelled { "Scan cancelled." } else { "Scan finished." }.into());
@@ -286,13 +330,40 @@ fn main() -> Result<(), slint::PlatformError> {
         ui.on_show_found_changed(move |show| {
             let ui = w.unwrap();
             if let Some(r) = &state.lock().unwrap().report {
-                ui.set_results(model(result_rows(r, show)));
+                ui.set_tab_rows(model(tab_rows(r, ui.get_tab(), show)));
             }
         });
     }
     {
         let state = state.clone();
         ui.on_cancel(move || state.lock().unwrap().cancel.store(true, Ordering::Relaxed));
+    }
+
+    {
+        let state = state.clone();
+        let w = ui.as_weak();
+        ui.on_tab_changed(move |tab| {
+            let ui = w.unwrap();
+            let rows = state.lock().unwrap().report.as_ref().map(|r| tab_rows(r, tab, ui.get_show_found())).unwrap_or_default();
+            ui.set_tab_rows(model(rows));
+        });
+    }
+    {
+        let state = state.clone();
+        let w = ui.as_weak();
+        ui.on_map_selected(move |idx| {
+            let ui = w.unwrap();
+            let st = state.lock().unwrap();
+            show_picture(&ui, usize::try_from(idx).ok().and_then(|i| st.maps.get(i)));
+        });
+    }
+    {
+        let state = state.clone();
+        ui.on_theme_saved(move |dark| {
+            let mut st = state.lock().unwrap();
+            st.cfg.dark_theme = Some(dark);
+            save_cfg(&st);
+        });
     }
 
     // --- cleanup ---
