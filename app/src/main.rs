@@ -1,4 +1,4 @@
-// OMSI-Tools-NG-rs — derived from OMSI-Tools by pietr26 (GPLv2). See LICENSE / README.
+// OMSI-Tools-NG — derived from OMSI-Tools by pietr26 (GPLv2). See LICENSE / README.
 #![cfg_attr(all(not(debug_assertions), windows), windows_subsystem = "windows")]
 
 mod i18n;
