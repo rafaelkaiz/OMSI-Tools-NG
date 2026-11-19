@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 256" role="img" aria-label="OMSI-Tools-NG">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2b8cff"/>
+      <stop offset="1" stop-color="#1556c4"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="62" fill="url(#g)"/>
+  <path fill="#fff" fill-rule="evenodd" transform="translate(40 36) scale(6.4)"
+        d="M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.8-1.8-5.4-5.4A8 8 0 0 0 10 2z M10 4.6a5.4 5.4 0 1 1 0 10.8 5.4 5.4 0 0 1 0-10.8z"/>
+  <rect x="133" y="154" width="113" height="87" rx="26" fill="#ffb020"/>
+  <text x="189.5" y="212" font-family="Arial, sans-serif" font-weight="900" font-size="52" text-anchor="middle" fill="#1c1d20">NG</text>
+  <text x="290" y="132" font-family="Segoe UI, Arial, sans-serif" font-weight="800" font-size="84" fill="#1f7aec">OMSI-Tools</text>
+  <text x="290" y="208" font-family="Segoe UI, Arial, sans-serif" font-weight="500" font-size="44" fill="#6b7280">Map scan &amp; cleanup · Rust</text>
+</svg>

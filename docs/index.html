@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OMSI-Tools-NG – map verification and cleanup for OMSI 2, neoOMSI and openOMSI</title>
+<meta name="description" content="OMSI-Tools-NG is a fast, modern Rust rewrite of the map verification and cleanup tools of OMSI-Tools, with support for OMSI 2, neoOMSI and openOMSI.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+  :root {
+    --bg: #eceef1; --panel: #ffffff; --border: #d3d7dd; --text: #1d2026; --muted: #5f6670;
+    --accent: #1f7aec; --ok: #1a8a54; --bad: #d12d35; --code: #f3f5f8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1c1d20; --panel: #26282c; --border: #383b41; --text: #ececee; --muted: #9da0a8;
+      --accent: #5aa2ff; --ok: #3dd68c; --bad: #ff6369; --code: #30333a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1c1d20; --panel: #26282c; --border: #383b41; --text: #ececee; --muted: #9da0a8;
+    --accent: #5aa2ff; --ok: #3dd68c; --bad: #ff6369; --code: #30333a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; }
+  a { color: var(--accent); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+  header.top { display: flex; align-items: center; gap: 12px; padding: 18px 0; }
+  header.top img { width: 40px; height: 40px; }
+  header.top strong { font-size: 18px; }
+  header.top nav { margin-left: auto; display: flex; gap: 18px; align-items: center; }
+  header.top nav a { text-decoration: none; color: var(--muted); font-size: 15px; }
+  header.top nav a:hover { color: var(--text); }
+  button.theme { background: var(--panel); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font: inherit; font-size: 14px; }
+  .hero { display: grid; grid-template-columns: 1.05fr 1fr; gap: 36px; align-items: center; padding: 36px 0 52px; }
+  .hero h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.1; margin: 0 0 14px; }
+  .hero p.lead { font-size: 19px; color: var(--muted); margin: 0 0 24px; }
+  .hero img.shot { width: 100%; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 18px 50px rgba(0,0,0,.28); }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn { display: inline-block; padding: 11px 20px; border-radius: 9px; text-decoration: none; font-weight: 600; border: 1px solid var(--border); background: var(--panel); color: var(--text); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .langs { margin-top: 18px; color: var(--muted); font-size: 14px; }
+  section { padding: 36px 0; }
+  h2 { font-size: 28px; margin: 0 0 18px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .card h3 { margin: 0 0 6px; font-size: 18px; }
+  .card p { margin: 0; color: var(--muted); }
+  .rule { border-left: 4px solid var(--ok); }
+  pre { background: var(--code); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; overflow-x: auto; font-size: 14px; }
+  code { font-family: Consolas, "Cascadia Mono", monospace; }
+  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .shots figure { margin: 0; }
+  .shots img { width: 100%; border-radius: 10px; border: 1px solid var(--border); }
+  .shots figcaption { color: var(--muted); font-size: 14px; margin-top: 6px; }
+  footer { border-top: 1px solid var(--border); margin-top: 40px; padding: 26px 0 40px; color: var(--muted); font-size: 14px; }
+  @media (max-width: 800px) { .hero { grid-template-columns: 1fr; } header.top nav a.hide { display: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <img src="favicon.svg" alt="">
+    <strong>OMSI-Tools-NG</strong>
+    <nav>
+      <a class="hide" href="#features">Features</a>
+      <a class="hide" href="#screenshots">Screenshots</a>
+      <a class="hide" href="#build">Build</a>
+      <button class="theme" id="theme" type="button">Theme</button>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div>
+      <h1>Find missing content. Clean up the rest.</h1>
+      <p class="lead">A modern, fast rewrite of the map verification and cleanup tools of OMSI-Tools, for <strong>OMSI 2</strong>, <strong>neoOMSI</strong> and <strong>openOMSI</strong>.</p>
+      <div class="cta">
+        <a class="btn primary" href="#build">Build from source</a>
+        <a class="btn" href="#features">What it does</a>
+      </div>
+      <p class="langs">English · Español · Deutsch · Polski · Čeština · Français &nbsp;|&nbsp; light and dark theme</p>
+    </div>
+    <img class="shot" src="img/map-verification-dark.png" alt="Map verification showing no missing files for a neoOMSI map">
+  </div>
+
+  <section id="features">
+    <h2>Features</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Map verification</h3>
+        <p>Scans <code>global.cfg</code>, tiles (including Chrono), ground textures, parklists, humans, AI lists and trains, and reports every missing file by type, with the files that reference it.</p>
+      </div>
+      <div class="card rule">
+        <h3>One content pool</h3>
+        <p>A file counts as present if it exists in <em>any</em> configured directory. A neoOMSI map using an object that lives in OMSI 2 is valid.</p>
+      </div>
+      <div class="card">
+        <h3>Safe cleanup</h3>
+        <p>Finds unused Sceneryobjects, Splines and Vehicles folders. It previews first; nothing is changed until you confirm, and folders are moved or sent to the recycle bin – never hard-deleted.</p>
+      </div>
+      <div class="card">
+        <h3>Read-only scanning</h3>
+        <p>Scans never write to your installs. The UI stays responsive: scans run on a worker thread with progress and cancel.</p>
+      </div>
+      <div class="card">
+        <h3>OMSI file formats done right</h3>
+        <p>Windows-1252 and UTF-16/UTF-8 (BOM) text files, backslash paths and any capitalisation – the same on every platform.</p>
+      </div>
+      <div class="card">
+        <h3>Rust core, Slint UI</h3>
+        <p>A UI-free <code>core</code> library with unit tests, and a small native app with six languages and light/dark themes.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="screenshots">
+    <h2>Screenshots</h2>
+    <div class="shots">
+      <figure><img src="img/map-verification-light.png" alt="Map verification, light theme" loading="lazy"><figcaption>Map verification – light theme</figcaption></figure>
+      <figure><img src="img/home-de.png" alt="Home screen in German" loading="lazy"><figcaption>Home screen – German UI</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="build">
+    <h2>Build and run</h2>
+    <p>You need a recent stable Rust toolchain.</p>
+<pre><code>cargo test
+cargo run -p app</code></pre>
+    <p>Command line, read-only:</p>
+<pre><code>cargo run -p omsi-tools-core --example scan -- "C:\...\OMSI 2" "C:\...\OMSI 2\neoOMSI" - "Map name"
+cargo run -p omsi-tools-core --example cleanup_preview -- "C:\...\OMSI 2" "C:\...\OMSI 2\neoOMSI"</code></pre>
+  </section>
+
+  <footer>
+    <p><strong>OMSI-Tools-NG</strong> is a Rust rewrite derived from <a href="https://github.com/pietr26/OMSI-Tools">OMSI-Tools</a> by <strong>pietr26</strong> and is released under the GNU General Public License v2.0. Not affiliated with the developers of OMSI, neoOMSI or openOMSI.</p>
+  </footer>
+</div>
+<script>
+  (function () {
+    var root = document.documentElement, btn = document.getElementById('theme');
+    function current() {
+      var t = root.getAttribute('data-theme');
+      if (t) return t;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    function label() { btn.textContent = current() === 'dark' ? 'Light theme' : 'Dark theme'; }
+    try { var saved = localStorage.getItem('theme'); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
+    label();
+    btn.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch (e) {}
+      label();
+    });
+  })();
+</script>
+</body>
+</html>

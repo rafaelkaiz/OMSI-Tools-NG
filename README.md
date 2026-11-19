@@ -1,44 +1,72 @@
-# OMSI-Tools-NG-rs
+<p align="center">
+  <img src="assets/logo-wordmark.svg" alt="OMSI-Tools-NG" width="520">
+</p>
 
-A from-scratch **Rust rewrite** of the map scanner and cleanup features of
-[OMSI-Tools](https://github.com/pietr26/OMSI-Tools) by **pietr26** (a modding tool for OMSI 2),
-with a modern [Slint](https://slint.dev) UI and support for **OMSI 2**, **neoOMSI** and **openOMSI**.
+<p align="center">
+  <strong>Map verification and cleanup for OMSI 2, neoOMSI and openOMSI</strong><br>
+  A modern Rust rewrite of two tools of <a href="https://github.com/pietr26/OMSI-Tools">OMSI-Tools</a> by pietr26.
+</p>
 
-## Attribution and licence
+<p align="center">
+  <img src="docs/img/map-verification-dark.png" alt="Map verification (dark theme)" width="760">
+</p>
 
-This project is derived from OMSI-Tools (C++/Qt) by pietr26 and from its fork OMSI-Tools-NG.
-The file formats, parsing rules and the scan/cleanup behaviour were ported from that code base,
-so the original credit is kept and the project is released under the
-**GNU General Public License v2.0** (see [`LICENSE`](LICENSE)).
+## What it does
 
-> Original work: Copyright (C) pietr26 and the OMSI-Tools contributors — <https://github.com/pietr26/OMSI-Tools>
+- **Map verification** – scans a map (`global.cfg`, tiles incl. Chrono, ground textures, parklists,
+  humans/drivers, AI lists, trains) and lists every missing file grouped by type, together with the
+  files that reference it.
+  **A referenced file counts as present if it exists in *any* configured directory** – a neoOMSI map
+  using an object that lives in OMSI 2 is valid.
+- **Cleanup** – finds `Sceneryobjects`, `Splines` and `Vehicles` folders that no map uses, in three
+  separate lists. It previews first; nothing changes until you confirm, and folders are moved to a
+  folder of your choice or to the recycle bin. **Nothing is ever hard-deleted.**
+- **Directories** – OMSI 2 (main), plus optional neoOMSI and openOMSI. Scans are strictly read-only.
+- **Languages** – English (default), Español, Deutsch, Polski, Čeština, Français.
+- **Themes** – light and dark (follows the system until you choose).
 
-## Features
-
-- Configurable game directories: OMSI 2 (main), optional neoOMSI, optional openOMSI. Stored in a
-  TOML config file.
-- Map list from all directories (`maps/*/global.cfg`, `[friendlyname]`), labelled with the source.
-- **Map scan** (read-only): global.cfg, tiles (incl. Chrono), ground textures, parklists, humans,
-  drivers, AI lists and train files. Reports missing files grouped by type, with the files that
-  reference them.
-  **A referenced file counts as present if it exists in *any* configured directory**, so a
-  neoOMSI map using an object that lives in OMSI 2 is valid.
-- **Cleanup**: finds content folders (`Sceneryobjects`, `Splines`, `Vehicles`) that no map uses.
-  It only previews by default; applying moves the folders to a quarantine folder or the
-  recycle bin. Nothing is ever hard-deleted.
-- OMSI's legacy encodings (Windows-1252, UTF-16/UTF-8 with BOM) and backslash paths with any
-  capitalisation are handled on every platform.
-
-## Layout
-
-| Crate  | Purpose                                              |
-|--------|------------------------------------------------------|
-| `core` | UI-free library: config, parsing, scanner, cleanup   |
-| `app`  | Slint desktop application                            |
+Website: [`docs/index.html`](docs/index.html) (static, can be served with GitHub Pages from `/docs`).
 
 ## Build and run
+
+You need a recent stable Rust toolchain.
 
 ```
 cargo test
 cargo run -p app
 ```
+
+Read-only command line helpers:
+
+```
+cargo run -p omsi-tools-core --example scan -- "<OMSI 2>" "<neoOMSI>" "<openOMSI or ->" "<map name filter>"
+cargo run -p omsi-tools-core --example cleanup_preview -- "<OMSI 2>" "<neoOMSI>"
+```
+
+Settings are stored as TOML in your user config directory (shown in the Settings page).
+
+## Layout
+
+| Path             | Purpose                                                                  |
+|------------------|--------------------------------------------------------------------------|
+| `core/`          | UI-free library: config, encodings, paths, map list, scanner, cleanup    |
+| `app/`           | Slint desktop application (`app/ui/main.slint`)                          |
+| `app/lang/`      | `strings.txt` – every translatable string in all six languages           |
+| `assets/`        | Logo, wordmark and social preview (SVG)                                  |
+| `docs/`          | Project website                                                          |
+
+Adding or changing a translation: edit `app/lang/strings.txt` (one line per string,
+`English|Español|Deutsch|Polski|Čeština|Français`); `build.rs` generates everything else.
+
+## Attribution and licence
+
+This project is derived from OMSI-Tools (C++/Qt) by **pietr26** and from its fork OMSI-Tools-NG. The
+file formats, parsing rules and the scan/cleanup behaviour were ported from that code base, so the
+original credit is kept and the project is released under the **GNU General Public License v2.0**
+(see [`LICENSE`](LICENSE)).
+
+> Original work: Copyright (C) pietr26 and the OMSI-Tools contributors – <https://github.com/pietr26/OMSI-Tools>
+
+Not affiliated with the developers of OMSI, neoOMSI or openOMSI.
+
+See also [`CHANGELOG.md`](CHANGELOG.md) and [`CONTRIBUTING.md`](CONTRIBUTING.md).

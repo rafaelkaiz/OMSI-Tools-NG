@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" role="img" aria-label="OMSI-Tools-NG">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2b8cff"/>
+      <stop offset="1" stop-color="#1556c4"/>
+    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1c1d20"/>
+      <stop offset="1" stop-color="#26303f"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <g transform="translate(120 170) scale(1.2)">
+    <rect width="256" height="256" rx="62" fill="url(#g)"/>
+    <path fill="#fff" fill-rule="evenodd" transform="translate(40 36) scale(6.4)"
+          d="M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.8-1.8-5.4-5.4A8 8 0 0 0 10 2z M10 4.6a5.4 5.4 0 1 1 0 10.8 5.4 5.4 0 0 1 0-10.8z"/>
+    <rect x="133" y="154" width="113" height="87" rx="26" fill="#ffb020"/>
+    <text x="189.5" y="212" font-family="Arial, sans-serif" font-weight="900" font-size="52" text-anchor="middle" fill="#1c1d20">NG</text>
+  </g>
+  <text x="470" y="290" font-family="Segoe UI, Arial, sans-serif" font-weight="800" font-size="104" fill="#ececee">OMSI-Tools-NG</text>
+  <text x="474" y="365" font-family="Segoe UI, Arial, sans-serif" font-size="40" fill="#9da0a8">Map verification and cleanup for</text>
+  <text x="474" y="418" font-family="Segoe UI, Arial, sans-serif" font-size="40" fill="#9da0a8">OMSI 2, neoOMSI and openOMSI</text>
+  <text x="474" y="500" font-family="Segoe UI, Arial, sans-serif" font-weight="600" font-size="30" fill="#3dd68c">Rust · Slint · GPLv2</text>
+</svg>
