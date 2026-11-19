@@ -1,0 +1,78 @@
+Troubleshooting|Solución de problemas|Fehlerbehebung|Rozwiązywanie problemów|Řešení problémů|Dépannage
+Disk memory|Espacio en disco|Speicherplatz|Miejsce na dysku|Místo na disku|Espace disque
+Configuration|Configuración|Konfiguration|Konfiguracja|Konfigurace|Configuration
+Map verification|Verificación de mapas|Kartenprüfung|Weryfikacja map|Kontrola map|Vérification des cartes
+Cleanup|Limpieza|Aufräumen|Czyszczenie|Úklid|Nettoyage
+Settings|Ajustes|Einstellungen|Ustawienia|Nastavení|Paramètres
+Map verification and cleanup for OMSI 2, neoOMSI and openOMSI|Verificación y limpieza de mapas para OMSI 2, neoOMSI y openOMSI|Kartenprüfung und Aufräumen für OMSI 2, neoOMSI und openOMSI|Weryfikacja i czyszczenie map dla OMSI 2, neoOMSI i openOMSI|Kontrola a úklid map pro OMSI 2, neoOMSI a openOMSI|Vérification et nettoyage des cartes pour OMSI 2, neoOMSI et openOMSI
+Based on OMSI-Tools by pietr26 (GPLv2).|Basado en OMSI-Tools de pietr26 (GPLv2).|Basiert auf OMSI-Tools von pietr26 (GPLv2).|Oparte na OMSI-Tools autorstwa pietr26 (GPLv2).|Vychází z OMSI-Tools od pietr26 (GPLv2).|Basé sur OMSI-Tools de pietr26 (GPLv2).
+Light theme|Tema claro|Helles Design|Jasny motyw|Světlý motiv|Thème clair
+Dark theme|Tema oscuro|Dunkles Design|Ciemny motyw|Tmavý motiv|Thème sombre
+← Home|← Inicio|← Start|← Start|← Domů|← Accueil
+Not set|Sin definir|Nicht gesetzt|Nie ustawiono|Nenastaveno|Non défini
+Browse…|Examinar…|Durchsuchen…|Przeglądaj…|Procházet…|Parcourir…
+Clear|Quitar|Leeren|Wyczyść|Vymazat|Effacer
+Reload|Recargar|Neu laden|Odśwież|Obnovit|Recharger
+Cancel|Cancelar|Abbrechen|Anuluj|Zrušit|Annuler
+Start!|¡Iniciar!|Start!|Start!|Start!|Démarrer !
+Overview|Resumen|Übersicht|Przegląd|Přehled|Aperçu
+Tiles|Tiles|Kacheln|Kafelki|Dlaždice|Tuiles
+Textures|Texturas|Texturen|Tekstury|Textury|Textures
+Sceneryobjects|Sceneryobjects|Sceneryobjects|Sceneryobjects|Sceneryobjects|Sceneryobjects
+Splines|Splines|Splines|Splines|Splines|Splines
+Vehicles|Vehículos|Fahrzeuge|Pojazdy|Vozidla|Véhicules
+Humans|Humans|Humans|Humans|Humans|Humans
+Total|Total|Gesamt|Razem|Celkem|Total
+Missing|Faltan|Fehlend|Brakuje|Chybí|Manquants
+No picture|Sin imagen|Kein Bild|Brak obrazu|Bez obrázku|Pas d'image
+Show found files|Mostrar archivos encontrados|Gefundene Dateien anzeigen|Pokaż znalezione pliki|Zobrazit nalezené soubory|Afficher les fichiers trouvés
+Press Start! to start the verification.|Pulsa ¡Iniciar! para comenzar la verificación.|Drücke Start!, um die Prüfung zu beginnen.|Naciśnij Start!, aby rozpocząć weryfikację.|Stiskni Start! pro zahájení kontroly.|Appuyez sur Démarrer ! pour lancer la vérification.
+No missing files in this category.|No faltan archivos en esta categoría.|Keine fehlenden Dateien in dieser Kategorie.|Brak brakujących plików w tej kategorii.|V této kategorii nechybí žádné soubory.|Aucun fichier manquant dans cette catégorie.
+Finds Sceneryobjects, Splines and Vehicles folders that no map of any configured directory uses. Nothing is changed until you confirm; folders are moved or sent to the recycle bin, never hard-deleted.|Busca carpetas de Sceneryobjects, Splines y Vehicles que no usa ningún mapa de los directorios configurados. No se cambia nada hasta que confirmes; las carpetas se mueven o van a la papelera, nunca se borran definitivamente.|Findet Ordner in Sceneryobjects, Splines und Vehicles, die keine Karte der konfigurierten Verzeichnisse verwendet. Es wird nichts geändert, bevor du bestätigst; Ordner werden verschoben oder in den Papierkorb gelegt, nie endgültig gelöscht.|Znajduje foldery Sceneryobjects, Splines i Vehicles, których nie używa żadna mapa ze skonfigurowanych katalogów. Nic się nie zmieni bez potwierdzenia; foldery są przenoszone lub trafiają do kosza, nigdy nie są trwale usuwane.|Najde složky Sceneryobjects, Splines a Vehicles, které nepoužívá žádná mapa z nastavených adresářů. Nic se nezmění bez potvrzení; složky se přesunou nebo odešlou do koše, nikdy se nesmažou natrvalo.|Trouve les dossiers Sceneryobjects, Splines et Vehicles qu'aucune carte des répertoires configurés n'utilise. Rien n'est modifié avant votre confirmation ; les dossiers sont déplacés ou mis à la corbeille, jamais supprimés définitivement.
+Analyze all maps|Analizar todos los mapas|Alle Karten analysieren|Analizuj wszystkie mapy|Analyzovat všechny mapy|Analyser toutes les cartes
+Select all|Seleccionar todo|Alle auswählen|Zaznacz wszystko|Vybrat vše|Tout sélectionner
+Select none|Quitar selección|Keine auswählen|Odznacz wszystko|Zrušit výběr|Tout désélectionner
+Confirm|Confirmar|Bestätigen|Potwierdź|Potvrdit|Confirmer
+Move to folder…|Mover a carpeta…|In Ordner verschieben…|Przenieś do folderu…|Přesunout do složky…|Déplacer vers un dossier…
+Move to recycle bin|Mover a la papelera|In den Papierkorb verschieben|Przenieś do kosza|Přesunout do koše|Mettre à la corbeille
+OMSI 2 directory|Directorio de OMSI 2|OMSI-2-Verzeichnis|Katalog OMSI 2|Adresář OMSI 2|Répertoire OMSI 2
+Main installation, the folder that contains Maps, Sceneryobjects, Vehicles…|Instalación principal: la carpeta que contiene Maps, Sceneryobjects, Vehicles…|Hauptinstallation, der Ordner mit Maps, Sceneryobjects, Vehicles…|Główna instalacja, folder zawierający Maps, Sceneryobjects, Vehicles…|Hlavní instalace, složka obsahující Maps, Sceneryobjects, Vehicles…|Installation principale, le dossier contenant Maps, Sceneryobjects, Vehicles…
+neoOMSI directory (optional)|Directorio de neoOMSI (opcional)|neoOMSI-Verzeichnis (optional)|Katalog neoOMSI (opcjonalnie)|Adresář neoOMSI (volitelné)|Répertoire neoOMSI (facultatif)
+Content found in any configured directory counts as present for every map.|El contenido encontrado en cualquier directorio configurado cuenta como presente para todos los mapas.|Inhalte, die in einem beliebigen konfigurierten Verzeichnis gefunden werden, gelten für jede Karte als vorhanden.|Zawartość znaleziona w dowolnym skonfigurowanym katalogu jest uznawana za obecną dla każdej mapy.|Obsah nalezený v kterémkoli nastaveném adresáři se pro každou mapu považuje za přítomný.|Un contenu trouvé dans n'importe quel répertoire configuré est considéré comme présent pour chaque carte.
+openOMSI directory (optional)|Directorio de openOMSI (opcional)|openOMSI-Verzeichnis (optional)|Katalog openOMSI (opcjonalnie)|Adresář openOMSI (volitelné)|Répertoire openOMSI (facultatif)
+Cleanup destination (optional)|Destino de la limpieza (opcional)|Ziel für das Aufräumen (optional)|Cel czyszczenia (opcjonalnie)|Cíl úklidu (volitelné)|Destination du nettoyage (facultatif)
+Unused folders are moved here by the cleanup instead of being deleted.|La limpieza mueve aquí las carpetas sin uso en lugar de borrarlas.|Ungenutzte Ordner werden beim Aufräumen hierher verschoben, statt gelöscht zu werden.|Nieużywane foldery są tu przenoszone podczas czyszczenia zamiast być usuwane.|Nepoužívané složky se při úklidu přesunou sem místo smazání.|Les dossiers inutilisés sont déplacés ici lors du nettoyage au lieu d'être supprimés.
+Settings are saved automatically to {}|Los ajustes se guardan automáticamente en {}|Einstellungen werden automatisch gespeichert unter {}|Ustawienia są zapisywane automatycznie w {}|Nastavení se ukládá automaticky do {}|Les paramètres sont enregistrés automatiquement dans {}
+Language|Idioma|Sprache|Język|Jazyk|Langue
+referenced by: {0}|referenciado por: {0}|referenziert von: {0}|przywoływany przez: {0}|odkazuje: {0}|référencé par : {0}
+found in {0}|encontrado en {0}|gefunden in {0}|znaleziono w {0}|nalezeno v {0}|trouvé dans {0}
+unknown file type|tipo de archivo desconocido|unbekannter Dateityp|nieznany typ pliku|neznámý typ souboru|type de fichier inconnu
+{0} [{1}]: no missing files among {2} referenced files|{0} [{1}]: no falta ningún archivo de {2} referenciados|{0} [{1}]: keine fehlenden Dateien unter {2} referenzierten Dateien|{0} [{1}]: brak brakujących plików wśród {2} przywoływanych|{0} [{1}]: nechybí žádný z {2} odkazovaných souborů|{0} [{1}] : aucun fichier manquant parmi {2} fichiers référencés
+{0} [{1}]: {2} missing file(s) among {3} referenced files|{0} [{1}]: faltan {2} archivo(s) de {3} referenciados|{0} [{1}]: {2} fehlende Datei(en) unter {3} referenzierten Dateien|{0} [{1}]: brakuje {2} plik(ów) spośród {3} przywoływanych|{0} [{1}]: chybí {2} souborů z {3} odkazovaných|{0} [{1}] : {2} fichier(s) manquant(s) sur {3} fichiers référencés
+(scan cancelled, partial result)|(análisis cancelado, resultado parcial)|(Scan abgebrochen, Teilergebnis)|(skanowanie anulowane, wynik częściowy)|(sken zrušen, částečný výsledek)|(analyse annulée, résultat partiel)
+{0} files · {1} · {2}|{0} archivos · {1} · {2}|{0} Dateien · {1} · {2}|{0} plików · {1} · {2}|{0} souborů · {1} · {2}|{0} fichiers · {1} · {2}
+{0} folder(s) selected · {1}|{0} carpeta(s) seleccionada(s) · {1}|{0} Ordner ausgewählt · {1}|zaznaczone foldery: {0} · {1}|vybráno složek: {0} · {1}|{0} dossier(s) sélectionné(s) · {1}
+Scanning {0} …|Analizando {0} …|Scanne {0} …|Skanowanie {0} …|Skenuji {0} …|Analyse de {0} …
+Scan cancelled.|Análisis cancelado.|Scan abgebrochen.|Skanowanie anulowane.|Sken zrušen.|Analyse annulée.
+Scan finished.|Análisis terminado.|Scan abgeschlossen.|Skanowanie zakończone.|Sken dokončen.|Analyse terminée.
+Settings saved.|Ajustes guardados.|Einstellungen gespeichert.|Ustawienia zapisane.|Nastavení uloženo.|Paramètres enregistrés.
+Select your OMSI 2 directory to get started.|Selecciona tu directorio de OMSI 2 para empezar.|Wähle dein OMSI-2-Verzeichnis, um zu beginnen.|Wybierz katalog OMSI 2, aby rozpocząć.|Pro začátek vyber adresář OMSI 2.|Sélectionnez votre répertoire OMSI 2 pour commencer.
+Configure at least the OMSI 2 directory first.|Configura primero al menos el directorio de OMSI 2.|Lege zuerst mindestens das OMSI-2-Verzeichnis fest.|Najpierw skonfiguruj przynajmniej katalog OMSI 2.|Nejprve nastav alespoň adresář OMSI 2.|Configurez d'abord au moins le répertoire OMSI 2.
+Analysis cancelled.|Análisis cancelado.|Analyse abgebrochen.|Analiza anulowana.|Analýza zrušena.|Analyse annulée.
+{0} unused folder(s), {1} in total — {2} maps checked. Nothing has been changed.|{0} carpeta(s) sin uso, {1} en total — {2} mapas revisados. No se ha cambiado nada.|{0} ungenutzte Ordner, insgesamt {1} — {2} Karten geprüft. Es wurde nichts geändert.|Nieużywane foldery: {0}, razem {1} — sprawdzono map: {2}. Nic nie zostało zmienione.|Nepoužívané složky: {0}, celkem {1} — zkontrolováno map: {2}. Nic nebylo změněno.|{0} dossier(s) inutilisé(s), {1} au total — {2} cartes vérifiées. Rien n'a été modifié.
+Analysis finished.|Análisis terminado.|Analyse abgeschlossen.|Analiza zakończona.|Analýza dokončena.|Analyse terminée.
+Analysis finished with {0} warning(s).|Análisis terminado con {0} aviso(s).|Analyse mit {0} Warnung(en) abgeschlossen.|Analiza zakończona, ostrzeżeń: {0}.|Analýza dokončena, upozornění: {0}.|Analyse terminée avec {0} avertissement(s).
+Select at least one folder first.|Selecciona antes al menos una carpeta.|Wähle zuerst mindestens einen Ordner aus.|Najpierw zaznacz co najmniej jeden folder.|Nejprve vyber alespoň jednu složku.|Sélectionnez d'abord au moins un dossier.
+Move {0} folder(s) to {1}? Nothing is deleted; each folder keeps its relative path.|¿Mover {0} carpeta(s) a {1}? No se borra nada; cada carpeta conserva su ruta relativa.|{0} Ordner nach {1} verschieben? Nichts wird gelöscht; jeder Ordner behält seinen relativen Pfad.|Przenieść foldery ({0}) do {1}? Nic nie jest usuwane; każdy folder zachowuje ścieżkę względną.|Přesunout složky ({0}) do {1}? Nic se nemaže; každá složka si zachová relativní cestu.|Déplacer {0} dossier(s) vers {1} ? Rien n'est supprimé ; chaque dossier garde son chemin relatif.
+Send {0} folder(s) to the recycle bin?|¿Enviar {0} carpeta(s) a la papelera?|{0} Ordner in den Papierkorb legen?|Przenieść foldery ({0}) do kosza?|Odeslat složky ({0}) do koše?|Mettre {0} dossier(s) à la corbeille ?
+{0} folder(s) moved.|{0} carpeta(s) movida(s).|{0} Ordner verschoben.|Przeniesiono folderów: {0}.|Přesunuto složek: {0}.|{0} dossier(s) déplacé(s).
+{0} failed: {1}|{0} con error: {1}|{0} fehlgeschlagen: {1}|{0} nie powiodło się: {1}|{0} selhalo: {1}|{0} en échec : {1}
+Reading tile {0} of {1}|Leyendo tile {0} de {1}|Lese Kachel {0} von {1}|Odczyt kafelka {0} z {1}|Čtu dlaždici {0} z {1}|Lecture de la tuile {0} sur {1}
+Reading parklists, humans and AI lists|Leyendo parklists, humans y listas de IA|Lese Parklisten, Humans und KI-Listen|Odczyt parklist, humans i list AI|Čtu parklisty, humans a seznamy AI|Lecture des parklists, humans et listes IA
+Reading map {0} of {1}: {2}|Leyendo mapa {0} de {1}: {2}|Lese Karte {0} von {1}: {2}|Odczyt mapy {0} z {1}: {2}|Čtu mapu {0} z {1}: {2}|Lecture de la carte {0} sur {1} : {2}
+Checking references between folders|Comprobando referencias entre carpetas|Prüfe Verweise zwischen Ordnern|Sprawdzanie odwołań między folderami|Kontroluji odkazy mezi složkami|Vérification des références entre dossiers
+Measuring unused folders|Midiendo las carpetas sin uso|Messe ungenutzte Ordner|Mierzenie nieużywanych folderów|Měřím nepoužívané složky|Mesure des dossiers inutilisés
+Processing {0}|Procesando {0}|Verarbeite {0}|Przetwarzanie {0}|Zpracovávám {0}|Traitement de {0}
+Done.|Hecho.|Fertig.|Gotowe.|Hotovo.|Terminé.
+Could not save settings: {0}|No se pudieron guardar los ajustes: {0}|Einstellungen konnten nicht gespeichert werden: {0}|Nie udało się zapisać ustawień: {0}|Nastavení se nepodařilo uložit: {0}|Impossible d'enregistrer les paramètres : {0}
+Could not load settings: {0}|No se pudieron cargar los ajustes: {0}|Einstellungen konnten nicht geladen werden: {0}|Nie udało się wczytać ustawień: {0}|Nastavení se nepodařilo načíst: {0}|Impossible de charger les paramètres : {0}

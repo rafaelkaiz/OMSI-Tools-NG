@@ -133,6 +133,7 @@ component TabButton inherits Rectangle {
     in property <string> text;
     in property <bool> active;
     in property <string> badge;
+    in property <color> badge-color: Theme.bad;
     callback clicked;
     height: 34px;
     border-radius: 6px;
@@ -154,7 +155,7 @@ component TabButton inherits Rectangle {
             height: 18px;
             y: (parent.height - self.height) / 2;
             border-radius: 9px;
-            background: Theme.bad;
+            background: root.badge-color;
             badge-text := Text {
                 text: root.badge;
                 color: white;
@@ -181,11 +182,11 @@ component DirRow inherits VerticalLayout {
         spacing: 8px;
         LineEdit {
             text <=> root.path;
-            placeholder-text: "Not set";
+            placeholder-text: @tr("" => "Not set");
             accepted(t) => { root.changed(t); }
         }
-        Button { text: "Browse…"; clicked => { root.browse(); } }
-        Button { text: "Clear"; clicked => { root.path = ""; root.changed(""); } }
+        Button { text: @tr("" => "Browse…"); clicked => { root.browse(); } }
+        Button { text: @tr("" => "Clear"); clicked => { root.path = ""; root.changed(""); } }
     }
 }
 
@@ -205,10 +206,10 @@ component PageHeader inherits Rectangle {
         padding-left: 16px;
         padding-right: 16px;
         spacing: 12px;
-        VerticalLayout { alignment: center; Button { text: "← Home"; clicked => { root.back(); } } }
+        VerticalLayout { alignment: center; Button { text: @tr("" => "← Home"); clicked => { root.back(); } } }
         Text { text: root.title; font-size: 17px; font-weight: 700; color: Theme.text; vertical-alignment: center; }
         Rectangle { }
-        VerticalLayout { alignment: center; Button { text: Theme.dark ? "Light theme" : "Dark theme"; clicked => { root.toggle-theme(); } } }
+        VerticalLayout { alignment: center; Button { text: Theme.dark ? @tr("" => "Light theme") : @tr("" => "Dark theme"); clicked => { root.toggle-theme(); } } }
     }
 }
 
@@ -234,6 +235,9 @@ export component MainWindow inherits Window {
     in property <string> config-path;
     callback browse-dir(int);
     callback dir-changed(int, string);
+    in property <[string]> language-names;
+    in-out property <int> lang-index: 0;
+    callback language-changed(int);
 
     // map verification
     in property <[string]> map-names;
@@ -259,6 +263,9 @@ export component MainWindow inherits Window {
     in property <[CleanRow]> clean-rows;
     in property <string> clean-summary;
     in property <string> clean-selected;
+    in-out property <int> clean-tab: 0;
+    in property <[string]> clean-badges;
+    callback clean-tab-changed(int);
     in property <string> pending-action;
     callback analyze;
     callback clean-toggled(int, bool);
@@ -278,33 +285,33 @@ export component MainWindow inherits Window {
             VerticalLayout {
                 alignment: center;
                 Text { text: "OMSI-Tools-NG"; font-size: 24px; font-weight: 800; color: Theme.text; }
-                Text { text: "Map verification and cleanup for OMSI 2, neoOMSI and openOMSI"; font-size: 13px; color: Theme.muted; }
+                Text { text: @tr("" => "Map verification and cleanup for OMSI 2, neoOMSI and openOMSI"); font-size: 13px; color: Theme.muted; }
             }
             Rectangle { }
-            VerticalLayout { alignment: center; Button { text: Theme.dark ? "Light theme" : "Dark theme"; clicked => { root.flip-theme(); } } }
+            VerticalLayout { alignment: center; Button { text: Theme.dark ? @tr("" => "Light theme") : @tr("" => "Dark theme"); clicked => { root.flip-theme(); } } }
         }
         Section {
-            title: "Troubleshooting";
+            title: @tr("" => "Troubleshooting");
             HomeTile {
-                text: "Map verification";
+                text: @tr("" => "Map verification");
                 glyph-color: Theme.ok;
                 glyph: "M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.8-1.8-5.4-5.4A8 8 0 0 0 10 2z M10 4.6a5.4 5.4 0 1 1 0 10.8 5.4 5.4 0 0 1 0-10.8z";
                 clicked => { root.page = 1; }
             }
         }
         Section {
-            title: "Disk memory";
+            title: @tr("" => "Disk memory");
             HomeTile {
-                text: "Cleanup";
+                text: @tr("" => "Cleanup");
                 glyph-color: #e8a317;
                 glyph: "M20.6 2.4a1.6 1.6 0 0 0-2.3 0L11.5 9.2l2.3 2.3 6.8-6.8a1.6 1.6 0 0 0 0-2.3z M10.3 10.4C8 10.9 6.4 12.6 6 15c-.2 1.5-.9 2.7-2.4 3.7-.6.4-.3 1.3.4 1.3 1.4 0 3-.2 4.5-.8 3-1.2 5-3.5 5.6-6.3z";
                 clicked => { root.page = 2; }
             }
         }
         Section {
-            title: "Configuration";
+            title: @tr("" => "Configuration");
             HomeTile {
-                text: "Settings";
+                text: @tr("" => "Settings");
                 glyph-color: Theme.muted;
                 glyph: "M3 6h11v2H3z M18 6h3v2h-3z M14 4h4v6h-4z M3 16h3v2H3z M10 16h11v2H10z M6 14h4v6H6z";
                 clicked => { root.page = 3; }
@@ -312,7 +319,7 @@ export component MainWindow inherits Window {
         }
         Rectangle { }
         Text {
-            text: "Based on OMSI-Tools by pietr26 (GPLv2). " + root.status;
+            text: @tr("" => "Based on OMSI-Tools by pietr26 (GPLv2).") + " " + root.status;
             font-size: 12px;
             color: Theme.muted;
             font-italic: true;
@@ -322,7 +329,7 @@ export component MainWindow inherits Window {
 
     // ---------------- MAP VERIFICATION ----------------
     if root.page == 1: VerticalLayout {
-        PageHeader { title: "Map verification"; back => { root.page = 0; } toggle-theme => { root.flip-theme(); } }
+        PageHeader { title: @tr("" => "Map verification"); back => { root.page = 0; } toggle-theme => { root.flip-theme(); } }
         VerticalLayout {
             padding: 16px;
             spacing: 10px;
@@ -335,10 +342,10 @@ export component MainWindow inherits Window {
                     selected => { root.map-selected(self.current-index); }
                     horizontal-stretch: 1;
                 }
-                Button { text: "Reload"; enabled: !root.busy; clicked => { root.reload-maps(); } }
-                if root.busy: Button { text: "Cancel"; clicked => { root.cancel(); } }
+                Button { text: @tr("" => "Reload"); enabled: !root.busy; clicked => { root.reload-maps(); } }
+                if root.busy: Button { text: @tr("" => "Cancel"); clicked => { root.cancel(); } }
                 Button {
-                    text: "Start!";
+                    text: @tr("" => "Start!");
                     primary: true;
                     enabled: !root.busy && root.selected-map >= 0;
                     clicked => { root.scan(root.selected-map); }
@@ -346,14 +353,13 @@ export component MainWindow inherits Window {
             }
             HorizontalLayout {
                 spacing: 4px;
-                TabButton { text: "Overview"; active: root.tab == 0; clicked => { root.tab = 0; root.tab-changed(0); } }
-                TabButton { text: "Tiles"; active: root.tab == 1; badge: root.counts[0].bad ? root.counts[0].missing : ""; clicked => { root.tab = 1; root.tab-changed(1); } }
-                TabButton { text: "Textures"; active: root.tab == 2; badge: root.counts[1].bad ? root.counts[1].missing : ""; clicked => { root.tab = 2; root.tab-changed(2); } }
-                TabButton { text: "Sceneryobjects"; active: root.tab == 3; badge: root.counts[2].bad ? root.counts[2].missing : ""; clicked => { root.tab = 3; root.tab-changed(3); } }
-                TabButton { text: "Splines"; active: root.tab == 4; badge: root.counts[3].bad ? root.counts[3].missing : ""; clicked => { root.tab = 4; root.tab-changed(4); } }
-                TabButton { text: "Vehicles"; active: root.tab == 5; badge: root.counts[4].bad ? root.counts[4].missing : ""; clicked => { root.tab = 5; root.tab-changed(5); } }
-                TabButton { text: "Humans"; active: root.tab == 6; badge: root.counts[5].bad ? root.counts[5].missing : ""; clicked => { root.tab = 6; root.tab-changed(6); } }
-                TabButton { text: "Notes"; active: root.tab == 7; clicked => { root.tab = 7; root.tab-changed(7); } }
+                TabButton { text: @tr("" => "Overview"); active: root.tab == 0; clicked => { root.tab = 0; root.tab-changed(0); } }
+                TabButton { text: @tr("" => "Tiles"); active: root.tab == 1; badge: root.counts[0].bad ? root.counts[0].missing : ""; clicked => { root.tab = 1; root.tab-changed(1); } }
+                TabButton { text: @tr("" => "Textures"); active: root.tab == 2; badge: root.counts[1].bad ? root.counts[1].missing : ""; clicked => { root.tab = 2; root.tab-changed(2); } }
+                TabButton { text: @tr("" => "Sceneryobjects"); active: root.tab == 3; badge: root.counts[2].bad ? root.counts[2].missing : ""; clicked => { root.tab = 3; root.tab-changed(3); } }
+                TabButton { text: @tr("" => "Splines"); active: root.tab == 4; badge: root.counts[3].bad ? root.counts[3].missing : ""; clicked => { root.tab = 4; root.tab-changed(4); } }
+                TabButton { text: @tr("" => "Vehicles"); active: root.tab == 5; badge: root.counts[4].bad ? root.counts[4].missing : ""; clicked => { root.tab = 5; root.tab-changed(5); } }
+                TabButton { text: @tr("" => "Humans"); active: root.tab == 6; badge: root.counts[5].bad ? root.counts[5].missing : ""; clicked => { root.tab = 6; root.tab-changed(6); } }
                 Rectangle { }
             }
             Card {
@@ -366,8 +372,8 @@ export component MainWindow inherits Window {
                         horizontal-stretch: 1;
                         HorizontalLayout {
                             Text { text: ""; width: 130px; }
-                            Text { text: "Total"; color: Theme.muted; font-size: 13px; width: 158px; }
-                            Text { text: "Missing"; color: Theme.muted; font-size: 13px; horizontal-stretch: 1; }
+                            Text { text: @tr("" => "Total"); color: Theme.muted; font-size: 13px; width: 158px; }
+                            Text { text: @tr("" => "Missing"); color: Theme.muted; font-size: 13px; horizontal-stretch: 1; }
                         }
                         for c in root.counts: HorizontalLayout {
                             spacing: 8px;
@@ -404,7 +410,7 @@ export component MainWindow inherits Window {
                         background: Theme.tile;
                         if root.has-picture: Image { source: root.map-picture; image-fit: contain; width: parent.width; height: parent.height; }
                         if !root.has-picture: Text {
-                            text: "No picture";
+                            text: @tr("" => "No picture");
                             color: Theme.muted;
                             horizontal-alignment: center;
                             vertical-alignment: center;
@@ -422,13 +428,13 @@ export component MainWindow inherits Window {
                             horizontal-stretch: 1;
                         }
                         CheckBox {
-                            text: "Show found files";
+                            text: @tr("" => "Show found files");
                             checked <=> root.show-found;
                             toggled => { root.show-found-changed(self.checked); }
                         }
                     }
                     if root.tab-rows.length == 0: Text {
-                        text: root.summary == "" ? "Press \"Start!\" to start the verification." : "No missing files in this category.";
+                        text: root.summary == "" ? @tr("" => "Press Start! to start the verification.") : "No missing files in this category.";
                         color: Theme.muted;
                         horizontal-alignment: center;
                         vertical-alignment: center;
@@ -469,24 +475,31 @@ export component MainWindow inherits Window {
 
     // ---------------- CLEANUP ----------------
     if root.page == 2: VerticalLayout {
-        PageHeader { title: "Cleanup"; back => { root.page = 0; } toggle-theme => { root.flip-theme(); } }
+        PageHeader { title: @tr("" => "Cleanup"); back => { root.page = 0; } toggle-theme => { root.flip-theme(); } }
         VerticalLayout {
             padding: 16px;
             spacing: 10px;
             Text {
-                text: "Finds Sceneryobjects, Splines and Vehicles folders that no map of any configured directory uses. Nothing is changed until you confirm; folders are moved or sent to the recycle bin, never hard-deleted.";
+                text: @tr("" => "Finds Sceneryobjects, Splines and Vehicles folders that no map of any configured directory uses. Nothing is changed until you confirm; folders are moved or sent to the recycle bin, never hard-deleted.");
                 wrap: word-wrap;
                 color: Theme.muted;
             }
             HorizontalLayout {
                 spacing: 8px;
-                Button { text: "Analyze all maps"; primary: true; enabled: !root.busy; clicked => { root.analyze(); } }
-                if root.busy: Button { text: "Cancel"; clicked => { root.cancel(); } }
+                Button { text: @tr("" => "Analyze all maps"); primary: true; enabled: !root.busy; clicked => { root.analyze(); } }
+                if root.busy: Button { text: @tr("" => "Cancel"); clicked => { root.cancel(); } }
                 Rectangle { }
-                Button { text: "Select all"; enabled: !root.busy && root.clean-rows.length > 0; clicked => { root.clean-select-all(true); } }
-                Button { text: "Select none"; enabled: !root.busy && root.clean-rows.length > 0; clicked => { root.clean-select-all(false); } }
+                Button { text: @tr("" => "Select all"); enabled: !root.busy && root.clean-rows.length > 0; clicked => { root.clean-select-all(true); } }
+                Button { text: @tr("" => "Select none"); enabled: !root.busy && root.clean-rows.length > 0; clicked => { root.clean-select-all(false); } }
             }
             if root.clean-summary != "": Text { text: root.clean-summary; font-weight: 700; color: Theme.text; wrap: word-wrap; }
+            HorizontalLayout {
+                spacing: 4px;
+                TabButton { text: @tr("" => "Sceneryobjects"); active: root.clean-tab == 0; badge: root.clean-badges[0]; badge-color: Theme.accent; clicked => { root.clean-tab = 0; root.clean-tab-changed(0); } }
+                TabButton { text: @tr("" => "Splines"); active: root.clean-tab == 1; badge: root.clean-badges[1]; badge-color: Theme.accent; clicked => { root.clean-tab = 1; root.clean-tab-changed(1); } }
+                TabButton { text: @tr("" => "Vehicles"); active: root.clean-tab == 2; badge: root.clean-badges[2]; badge-color: Theme.accent; clicked => { root.clean-tab = 2; root.clean-tab-changed(2); } }
+                Rectangle { }
+            }
             Card {
                 vertical-stretch: 1;
                 ListView {
@@ -517,16 +530,16 @@ export component MainWindow inherits Window {
                     padding: 12px;
                     spacing: 10px;
                     Text { text: root.pending-action; wrap: word-wrap; vertical-alignment: center; color: Theme.text; horizontal-stretch: 1; }
-                    Button { text: "Confirm"; primary: true; clicked => { root.confirm-action(); } }
-                    Button { text: "Cancel"; clicked => { root.cancel-action(); } }
+                    Button { text: @tr("" => "Confirm"); primary: true; clicked => { root.confirm-action(); } }
+                    Button { text: @tr("" => "Cancel"); clicked => { root.cancel-action(); } }
                 }
             }
             if root.pending-action == "": HorizontalLayout {
                 spacing: 8px;
                 Text { text: root.clean-selected; vertical-alignment: center; color: Theme.text; }
                 Rectangle { }
-                Button { text: "Move to folder…"; enabled: !root.busy; clicked => { root.request-move(); } }
-                Button { text: "Move to recycle bin"; enabled: !root.busy; clicked => { root.request-recycle(); } }
+                Button { text: @tr("" => "Move to folder…"); enabled: !root.busy; clicked => { root.request-move(); } }
+                Button { text: @tr("" => "Move to recycle bin"); enabled: !root.busy; clicked => { root.request-recycle(); } }
             }
             HorizontalLayout {
                 spacing: 12px;
@@ -538,38 +551,52 @@ export component MainWindow inherits Window {
 
     // ---------------- SETTINGS ----------------
     if root.page == 3: VerticalLayout {
-        PageHeader { title: "Settings"; back => { root.page = 0; } toggle-theme => { root.flip-theme(); } }
+        PageHeader { title: @tr("" => "Settings"); back => { root.page = 0; } toggle-theme => { root.flip-theme(); } }
         VerticalLayout {
             padding: 16px;
             spacing: 14px;
             alignment: start;
             Card {
+                HorizontalLayout {
+                    padding: 16px;
+                    spacing: 12px;
+                    Text { text: @tr("" => "Language"); font-weight: 700; color: Theme.text; vertical-alignment: center; }
+                    ComboBox {
+                        model: root.language-names;
+                        current-index <=> root.lang-index;
+                        selected => { root.language-changed(self.current-index); }
+                        width: 220px;
+                    }
+                    Rectangle { }
+                }
+            }
+            Card {
                 VerticalLayout {
                     padding: 16px;
                     spacing: 16px;
                     DirRow {
-                        title: "OMSI 2 directory";
-                        hint: "Main installation, the folder that contains Maps, Sceneryobjects, Vehicles…";
+                        title: @tr("" => "OMSI 2 directory");
+                        hint: @tr("" => "Main installation, the folder that contains Maps, Sceneryobjects, Vehicles…");
                         path <=> root.omsi-dir;
                         browse => { root.browse-dir(0); }
                         changed(t) => { root.dir-changed(0, t); }
                     }
                     DirRow {
-                        title: "neoOMSI directory (optional)";
-                        hint: "Content found in any configured directory counts as present for every map.";
+                        title: @tr("" => "neoOMSI directory (optional)");
+                        hint: @tr("" => "Content found in any configured directory counts as present for every map.");
                         path <=> root.neo-dir;
                         browse => { root.browse-dir(1); }
                         changed(t) => { root.dir-changed(1, t); }
                     }
                     DirRow {
-                        title: "openOMSI directory (optional)";
+                        title: @tr("" => "openOMSI directory (optional)");
                         path <=> root.open-dir;
                         browse => { root.browse-dir(2); }
                         changed(t) => { root.dir-changed(2, t); }
                     }
                     DirRow {
-                        title: "Cleanup destination (optional)";
-                        hint: "Unused folders are moved here by the cleanup instead of being deleted.";
+                        title: @tr("" => "Cleanup destination (optional)");
+                        hint: @tr("" => "Unused folders are moved here by the cleanup instead of being deleted.");
                         path <=> root.cleanup-dir;
                         browse => { root.browse-dir(3); }
                         changed(t) => { root.dir-changed(3, t); }
@@ -577,7 +604,7 @@ export component MainWindow inherits Window {
                 }
             }
             Text {
-                text: "Settings are saved automatically to " + root.config-path;
+                text: @tr("" => "Settings are saved automatically to {}", root.config-path);
                 font-size: 12px;
                 color: Theme.muted;
                 wrap: word-wrap;

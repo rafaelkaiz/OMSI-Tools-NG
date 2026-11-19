@@ -112,8 +112,27 @@ impl ScanReport {
     }
 }
 
+/// What a [`Progress`] update is about (lets a UI localise its own message).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Phase {
+    /// Reading tile `done + 1` of `total`.
+    Tile,
+    /// Reading parklists, humans and AI lists.
+    Lists,
+    /// Cleanup: reading map `done + 1`; `message` is the map label.
+    Map,
+    /// Cleanup: checking references between folders.
+    Refs,
+    /// Cleanup: measuring unused folders.
+    Measure,
+    /// Cleanup apply: working on the folder named in `message`.
+    Apply,
+    Done,
+}
+
 #[derive(Debug, Clone)]
 pub struct Progress {
+    pub phase: Phase,
     pub done: usize,
     pub total: usize,
     pub message: String,
@@ -230,6 +249,7 @@ pub(crate) fn collect_refs(
             return refs;
         }
         progress(Progress {
+            phase: Phase::Tile,
             done: n,
             total,
             message: format!("Reading tile {} of {}", n + 1, total),
@@ -264,6 +284,7 @@ pub(crate) fn collect_refs(
         }
     }
     progress(Progress {
+        phase: Phase::Lists,
         done: total,
         total,
         message: "Reading parklists, humans and AI lists".into(),

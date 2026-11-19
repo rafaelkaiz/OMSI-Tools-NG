@@ -40,6 +40,8 @@ pub struct Config {
     pub cleanup_dir: Option<PathBuf>,
     /// `Some(true)` dark, `Some(false)` light, `None` follow the system.
     pub dark_theme: Option<bool>,
+    /// UI language code (`en`, `es`, `de`, `pl`, `cs`, `fr`); `None` = English.
+    pub language: Option<String>,
 }
 
 #[derive(Debug, thiserror::Error)]

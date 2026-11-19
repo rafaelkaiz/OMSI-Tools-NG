@@ -18,7 +18,7 @@ use crate::config::{GameDirs, Source};
 use crate::encoding;
 use crate::maps::MapEntry;
 use crate::paths;
-use crate::scanner::{scan_map, Progress};
+use crate::scanner::{scan_map, Phase, Progress};
 
 /// Root folders that are cleaned up.
 pub const ROOTS: [&str; 3] = ["Sceneryobjects", "Splines", "Vehicles"];
@@ -145,9 +145,10 @@ pub fn analyze(
             return report;
         }
         progress(Progress {
+            phase: Phase::Map,
             done: i,
             total,
-            message: format!("Reading map {} of {} ({})", i + 1, maps.len(), map.label()),
+            message: map.label(),
         });
         let scan = scan_map(dirs, map, cancel, &mut |_| {});
         if scan.cancelled {
@@ -171,7 +172,7 @@ pub fn analyze(
     report.maps_scanned = maps.len();
 
     // 2. Folders mentioned by used folders' files (transitively).
-    progress(Progress { done: maps.len(), total, message: "Checking references between folders".into() });
+    progress(Progress { phase: Phase::Refs, done: maps.len(), total, message: "Checking references between folders".into() });
     let mut folder_paths: Vec<((String, String), Source, PathBuf)> = Vec::new();
     for (source, base) in dirs.iter() {
         for root in ROOTS {
@@ -203,7 +204,7 @@ pub fn analyze(
     }
 
     // 3. Everything else is a candidate.
-    progress(Progress { done: total - 1, total, message: "Measuring unused folders".into() });
+    progress(Progress { phase: Phase::Measure, done: total - 1, total, message: "Measuring unused folders".into() });
     for (key, source, path) in folder_paths {
         if used.contains(&key) || PROTECTED.contains(&(key.0.as_str(), key.1.as_str())) {
             continue;
@@ -225,7 +226,7 @@ pub fn analyze(
         .sort_by(|a, b| (a.root.as_str(), a.relative.to_lowercase(), a.source).cmp(&(b.root.as_str(), b.relative.to_lowercase(), b.source)));
     report.warnings.sort();
     report.warnings.dedup();
-    progress(Progress { done: total, total, message: "Done".into() });
+    progress(Progress { phase: Phase::Done, done: total, total, message: "Done".into() });
     report
 }
 
@@ -275,7 +276,7 @@ pub fn apply(dirs: &GameDirs, selected: &[Candidate], action: &Action, progress:
 
     let mut seen = BTreeSet::new();
     for (i, c) in selected.iter().enumerate() {
-        progress(Progress { done: i, total: selected.len(), message: format!("{} ({})", c.relative, c.source) });
+        progress(Progress { phase: Phase::Apply, done: i, total: selected.len(), message: format!("{} ({})", c.relative, c.source) });
         if !seen.insert(c.path.clone()) {
             continue;
         }
@@ -311,7 +312,7 @@ pub fn apply(dirs: &GameDirs, selected: &[Candidate], action: &Action, progress:
             Err(e) => out.failed.push((label, e)),
         }
     }
-    progress(Progress { done: selected.len(), total: selected.len(), message: "Done".into() });
+    progress(Progress { phase: Phase::Done, done: selected.len(), total: selected.len(), message: "Done".into() });
     out
 }
 
