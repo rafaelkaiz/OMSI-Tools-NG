@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.0-beta.1
 
 ### New
 - Rust rewrite of the map verification and cleanup tools of OMSI-Tools (workspace with a UI-free
@@ -12,4 +12,4 @@
   folder or the recycle bin (never hard-delete).
 - Six UI languages (English, Español, Deutsch, Polski, Čeština, Français), light and dark themes.
 - Read-only command line examples `scan` and `cleanup_preview`.
-- Logo, project website (`docs/`) and documentation.
+- Logo, Windows application icon (`assets/logo.ico`), project website (`docs/`) and documentation.

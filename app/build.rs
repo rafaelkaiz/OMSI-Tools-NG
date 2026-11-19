@@ -45,4 +45,15 @@ fn main() {
 
     let config = slint_build::CompilerConfiguration::new().with_bundled_translations(out.join("lang"));
     slint_build::compile_with_config("ui/main.slint", config).expect("Slint compilation failed");
+
+    // Windows: embed the application icon into the executable.
+    #[cfg(windows)]
+    {
+        println!("cargo:rerun-if-changed=../assets/logo.ico");
+        let mut res = winresource::WindowsResource::new();
+        res.set_icon("../assets/logo.ico");
+        res.set("ProductName", "OMSI-Tools-NG");
+        res.set("FileDescription", "OMSI-Tools-NG");
+        res.compile().expect("could not embed the icon");
+    }
 }
