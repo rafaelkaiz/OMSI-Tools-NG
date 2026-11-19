@@ -1,0 +1,10 @@
+[package]
+name = "app"
+description = "OMSI-Tools-NG desktop application"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+omsi-tools-core = { path = "../core" }
