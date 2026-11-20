@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/img/map-verification-dark.png" alt="Map verification (dark theme)" width="760">
+  <img src="docs/img/map-verification.png" alt="Map verification" width="700">
 </p>
 
 ## What it does
