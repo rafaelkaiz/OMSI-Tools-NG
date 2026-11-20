@@ -21,6 +21,7 @@
 - **Cleanup** – finds `Sceneryobjects`, `Splines` and `Vehicles` folders that no map uses, in three
   separate lists. It previews first; nothing changes until you confirm, and folders are moved to a
   folder of your choice or to the recycle bin. **Nothing is ever hard-deleted.**
+- **Fast** – a native Rust scanner: a map with 7,500 referenced files is verified in about 2 seconds, and the cleanup analysis of 51 maps and ~120 GB of content takes about 20 seconds (release build, measured on a real OMSI 2 + neoOMSI install).
 - **Directories** – OMSI 2 (main), plus optional neoOMSI and openOMSI. Scans are strictly read-only.
 - **Languages** – English (default), Español, Deutsch, Polski, Čeština, Français.
 - **Themes** – light and dark (follows the system until you choose).
