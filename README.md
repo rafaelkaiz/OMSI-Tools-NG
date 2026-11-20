@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo-wordmark.svg" alt="OMSI-Tools-NG" width="300">
+  <img src="assets/logo-wordmark.png" alt="OMSI-Tools-NG" width="360">
 </p>
 
 <p align="center">
