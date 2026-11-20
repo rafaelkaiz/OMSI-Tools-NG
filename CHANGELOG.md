@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0-beta.1
+## 1.0.0
 
 ### New
 - Rust rewrite of the map verification and cleanup tools of OMSI-Tools (workspace with a UI-free
@@ -13,3 +13,4 @@
 - Six UI languages (English, Español, Deutsch, Polski, Čeština, Français), light and dark themes.
 - Read-only command line examples `scan` and `cleanup_preview`.
 - Logo, Windows application icon (`assets/logo.ico`), project website (`docs/`) and documentation.
+- Fast: a map with about 7,500 referenced files is verified in about 2 seconds; analysing 51 maps for cleanup takes about 20 seconds.
