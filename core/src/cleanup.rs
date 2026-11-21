@@ -23,8 +23,18 @@ use crate::scanner::{scan_map, Phase, Progress};
 /// Root folders that are cleaned up.
 pub const ROOTS: [&str; 3] = ["Sceneryobjects", "Splines", "Vehicles"];
 
-/// Folders below the roots that are never reported (OMSI needs them without map references).
-const PROTECTED: [(&str, &str); 2] = [("vehicles", "announcements"), ("vehicles", "anzeigen")];
+/// Folders below the roots that are never reported (OMSI and the nEditor need them without map
+/// references). Names are compared in lower case.
+const PROTECTED: [(&str, &str); 8] = [
+    ("vehicles", "announcements"),
+    ("vehicles", "anzeigen"),
+    ("sceneryobjects", "neditor"),
+    ("sceneryobjects", "neditorgenerated"),
+    ("sceneryobjects", "neditorthumbnails"),
+    ("splines", "neditor"),
+    ("splines", "neditorgenerated"),
+    ("splines", "neditorthumbnails"),
+];
 
 /// Extensions of files that may reference other content by path.
 const TEXT_EXTENSIONS: [&str; 10] = ["sco", "sli", "ovh", "bus", "zug", "hum", "cfg", "txt", "osc", "map"];
@@ -328,6 +338,12 @@ mod tests {
         // Referenced only indirectly by a used sceneryobject's text.
         write(&omsi, "Sceneryobjects/Shared/house.sco", "[mesh]\nhouse.o3d\nSplines\\Indirect\\spline.sli\n");
         write(&omsi, "Splines/Indirect/spline.sli", "x");
+        // nEditor folders are never reported.
+        for root in ["Sceneryobjects", "Splines"] {
+            for name in ["nEditor", "nEditorGenerated", "nEditorThumbnails"] {
+                write(&omsi, &format!("{root}/{name}/x.txt"), "x");
+            }
+        }
         let dirs = GameDirs::new(vec![(Source::Omsi2, omsi), (Source::NeoOmsi, neo)]);
         (tmp, dirs)
     }
@@ -339,7 +355,7 @@ mod tests {
         let r = analyze(&dirs, &maps, &AtomicBool::new(false), &mut |_| {});
         let rel: Vec<_> = r.candidates.iter().map(|c| c.relative.clone()).collect();
         // Shared (via neoOMSI map), Roads, Bus1 are used; Indirect via house.sco's text;
-        // Anzeigen is protected.
+        // Anzeigen and the nEditor folders are protected.
         assert_eq!(rel, vec!["Sceneryobjects\\Unused", "Splines\\OldRoads", "Vehicles\\Spare"]);
         assert!(r.candidates.iter().all(|c| c.file_count == 1 && c.size_bytes == 1));
         assert_eq!(r.maps_scanned, 1);
