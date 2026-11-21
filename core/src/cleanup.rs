@@ -79,8 +79,9 @@ fn used_key(root: &str, folder: &str) -> (String, String) {
     (root.to_lowercase(), folder.to_lowercase())
 }
 
-/// `(root, folder)` pairs mentioned in a text, e.g. `Vehicles\MAN\x.ovh`.
-fn mentioned_folders(text: &str) -> Vec<(String, String)> {
+/// `(root, folder)` pairs mentioned in a text, e.g. `Vehicles\MAN\x.ovh`. Relative paths such as
+/// `..\Scripts\x.osc` count as a folder next to the file's own folder, i.e. below `own_root`.
+fn mentioned_folders(text: &str, own_root: &str) -> Vec<(String, String)> {
     let norm = text.replace('/', "\\").to_lowercase();
     let mut out = Vec::new();
     for root in ROOTS {
@@ -97,6 +98,22 @@ fn mentioned_folders(text: &str) -> Vec<(String, String)> {
             }
             rest = after;
         }
+    }
+    // Relative references: `..\Folder\file` points to a sibling folder below the same root.
+    let mut rest = norm.as_str();
+    while let Some(pos) = rest.find("..\\") {
+        let mut after = &rest[pos..];
+        while let Some(a) = after.strip_prefix("..\\") {
+            after = a;
+        }
+        let folder: String = after
+            .chars()
+            .take_while(|c| !matches!(c, '\\' | '\r' | '\n' | '\t'))
+            .collect();
+        if !folder.is_empty() && after[folder.len()..].starts_with('\\') {
+            out.push((own_root.to_string(), folder.trim().to_string()));
+        }
+        rest = after;
     }
     out
 }
@@ -202,7 +219,7 @@ pub fn analyze(
             walk(path, &mut c, &mut s, &mut texts);
             for t in texts {
                 if let Ok(text) = encoding::read_text(&t) {
-                    for m in mentioned_folders(&text) {
+                    for m in mentioned_folders(&text, &key.0) {
                         grew |= used.insert(m);
                     }
                 }
@@ -402,7 +419,16 @@ mod tests {
 
     #[test]
     fn mention_parsing() {
-        let m = mentioned_folders("a Vehicles/MAN/x.ovh b\r\nSplines\\Foo\\a.sli no\\Vehicles\\only");
+        let m = mentioned_folders("a Vehicles/MAN/x.ovh b\r\nSplines\\Foo\\a.sli no\\Vehicles\\only", "sceneryobjects");
         assert_eq!(m, vec![("splines".into(), "foo".into()), ("vehicles".into(), "man".into())]);
+    }
+
+    #[test]
+    fn relative_references_count_as_siblings() {
+        let m = mentioned_folders("[script]\n..\\Shared_Scripts\\door.osc\n..\\..\\Other\\a.osc\nplain.osc", "sceneryobjects");
+        assert_eq!(
+            m,
+            vec![("sceneryobjects".into(), "shared_scripts".into()), ("sceneryobjects".into(), "other".into())]
+        );
     }
 }
