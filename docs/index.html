@@ -3,138 +3,267 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OMSI-Tools-NG – map verification and cleanup for OMSI 2, neoOMSI and openOMSI</title>
-<meta name="description" content="OMSI-Tools-NG is a fast, modern Rust rewrite of the map verification and cleanup tools of OMSI-Tools, with support for OMSI 2, neoOMSI and openOMSI.">
+<title>OMSI-Tools-NG – fast map verification and cleanup for OMSI 2, neoOMSI and openOMSI</title>
+<meta name="description" content="OMSI-Tools-NG is a very fast, modern Rust rewrite of the map verification and cleanup tools of OMSI-Tools, for OMSI 2, neoOMSI and openOMSI. Windows and Linux.">
+<meta property="og:title" content="OMSI-Tools-NG">
+<meta property="og:description" content="Very fast map verification and safe cleanup for OMSI 2, neoOMSI and openOMSI.">
+<meta property="og:image" content="img/map-verification.png">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <style>
   :root {
-    --bg: #eceef1; --panel: #ffffff; --border: #d3d7dd; --text: #1d2026; --muted: #5f6670;
-    --accent: #1f7aec; --ok: #1a8a54; --bad: #d12d35; --code: #f3f5f8;
+    --bg: #f3f5f8; --bg2: #e8ecf2; --panel: #ffffff; --border: #d6dbe3; --text: #14171c; --muted: #5a6370;
+    --accent: #1f7aec; --accent2: #14b8a6; --amber: #ffb020; --ok: #17935a; --code: #eef1f6;
+    --shadow: 0 18px 50px rgba(20, 30, 50, .16); --glow: rgba(31, 122, 236, .16);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #1c1d20; --panel: #26282c; --border: #383b41; --text: #ececee; --muted: #9da0a8;
-      --accent: #5aa2ff; --ok: #3dd68c; --bad: #ff6369; --code: #30333a;
+      --bg: #101216; --bg2: #171a20; --panel: #1d2026; --border: #2d323b; --text: #eef0f3; --muted: #9aa1ad;
+      --accent: #5aa2ff; --accent2: #2dd4bf; --ok: #3dd68c; --code: #262a32;
+      --shadow: 0 18px 60px rgba(0, 0, 0, .55); --glow: rgba(90, 162, 255, .18);
     }
   }
   :root[data-theme="dark"] {
-    --bg: #1c1d20; --panel: #26282c; --border: #383b41; --text: #ececee; --muted: #9da0a8;
-    --accent: #5aa2ff; --ok: #3dd68c; --bad: #ff6369; --code: #30333a;
+    --bg: #101216; --bg2: #171a20; --panel: #1d2026; --border: #2d323b; --text: #eef0f3; --muted: #9aa1ad;
+    --accent: #5aa2ff; --accent2: #2dd4bf; --ok: #3dd68c; --code: #262a32;
+    --shadow: 0 18px 60px rgba(0, 0, 0, .55); --glow: rgba(90, 162, 255, .18);
   }
   * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; }
   a { color: var(--accent); }
-  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
-  header.top { display: flex; align-items: center; gap: 12px; padding: 18px 0; }
-  header.top img { width: 40px; height: 40px; }
-  header.top strong { font-size: 18px; }
-  header.top nav { margin-left: auto; display: flex; gap: 18px; align-items: center; }
-  header.top nav a { text-decoration: none; color: var(--muted); font-size: 15px; }
-  header.top nav a:hover { color: var(--text); }
-  button.theme { background: var(--panel); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font: inherit; font-size: 14px; }
-  .hero { display: grid; grid-template-columns: 1.05fr 1fr; gap: 36px; align-items: center; padding: 36px 0 52px; }
-  .hero h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.1; margin: 0 0 14px; }
-  .hero p.lead { font-size: 19px; color: var(--muted); margin: 0 0 24px; }
-  .hero img.shot { width: 100%; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 18px 50px rgba(0,0,0,.28); }
-  .cta { display: flex; gap: 12px; flex-wrap: wrap; }
-  .btn { display: inline-block; padding: 11px 20px; border-radius: 9px; text-decoration: none; font-weight: 600; border: 1px solid var(--border); background: var(--panel); color: var(--text); }
-  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .langs { margin-top: 18px; color: var(--muted); font-size: 14px; }
-  section { padding: 36px 0; }
-  h2 { font-size: 28px; margin: 0 0 18px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
-  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 22px; }
+
+  /* top bar */
+  .bar { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(12px); background: color-mix(in srgb, var(--bg) 82%, transparent); border-bottom: 1px solid var(--border); }
+  .bar .wrap { display: flex; align-items: center; gap: 12px; height: 60px; }
+  .bar img { width: 32px; height: 32px; }
+  .bar strong { font-size: 17px; }
+  .bar nav { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+  .bar nav a.link { text-decoration: none; color: var(--muted); font-size: 15px; padding: 6px 10px; border-radius: 8px; }
+  .bar nav a.link:hover { color: var(--text); background: var(--bg2); }
+  .iconbtn { display: inline-flex; align-items: center; gap: 8px; background: var(--panel); color: var(--text); border: 1px solid var(--border); border-radius: 9px; padding: 7px 12px; text-decoration: none; cursor: pointer; font: inherit; font-size: 14px; }
+  .iconbtn:hover { border-color: var(--accent); }
+  .iconbtn svg { width: 18px; height: 18px; fill: currentColor; }
+
+  /* hero */
+  .hero { position: relative; text-align: center; padding: 74px 0 40px; overflow: hidden; }
+  .hero::before { content: ""; position: absolute; inset: -20% -10% auto; height: 520px; background: radial-gradient(60% 60% at 50% 40%, var(--glow), transparent 70%); pointer-events: none; }
+  .hero > * { position: relative; }
+  .hero .logo { width: 104px; height: 104px; border-radius: 26px; box-shadow: var(--shadow); }
+  .hero h1 { font-size: clamp(34px, 6vw, 58px); line-height: 1.08; margin: 22px auto 14px; max-width: 820px; letter-spacing: -.02em; }
+  .hero h1 span { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p.lead { font-size: 20px; color: var(--muted); max-width: 680px; margin: 0 auto 28px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 30px; }
+  .chip { background: var(--panel); border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; font-size: 14px; color: var(--muted); }
+  .chip b { color: var(--text); }
+  .shot-main { display: block; width: min(960px, 100%); margin: 34px auto 0; border-radius: 14px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+
+  /* downloads */
+  .dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; max-width: 760px; margin: 0 auto; text-align: left; }
+  .dl a.card { display: flex; align-items: center; gap: 18px; padding: 20px 22px; border-radius: 16px; background: var(--panel); border: 1px solid var(--border); text-decoration: none; color: var(--text); box-shadow: 0 6px 22px rgba(0,0,0,.08); transition: transform .15s, border-color .15s, box-shadow .15s; }
+  .dl a.card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: var(--shadow); }
+  .dl .os { width: 60px; height: 60px; flex: none; border-radius: 15px; display: grid; place-items: center; }
+  .dl .os svg { width: 36px; height: 36px; }
+  .dl .win .os { background: #0a84ff1f; }
+  .dl .lin .os { background: #ffb0201f; }
+  .dl .t1 { font-size: 19px; font-weight: 700; line-height: 1.2; }
+  .dl .t2 { font-size: 14px; color: var(--muted); }
+  .dl .go { margin-left: auto; font-size: 22px; color: var(--accent); }
+  .under { text-align: center; color: var(--muted); font-size: 14px; margin-top: 16px; }
+  .under a { margin: 0 6px; }
+
+  section { padding: 56px 0 18px; }
+  h2 { font-size: 32px; margin: 0 0 8px; letter-spacing: -.01em; text-align: center; }
+  .sub { text-align: center; color: var(--muted); margin: 0 auto 30px; max-width: 640px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+  .card .ic { width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; font-size: 22px; background: var(--bg2); margin-bottom: 12px; }
   .card h3 { margin: 0 0 6px; font-size: 18px; }
   .card p { margin: 0; color: var(--muted); }
-  .rule { border-left: 4px solid var(--ok); }
-  pre { background: var(--code); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; overflow-x: auto; font-size: 14px; }
-  code { font-family: Consolas, "Cascadia Mono", monospace; }
-  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .card.speed { border-color: var(--accent); background: linear-gradient(160deg, var(--glow), var(--panel) 60%); }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 18px; }
+  .stat { text-align: center; background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 22px 14px; }
+  .stat b { display: block; font-size: 38px; line-height: 1.1; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .stat span { color: var(--muted); font-size: 14px; }
+  .note { text-align: center; color: var(--muted); font-size: 13px; margin-top: 10px; }
+
+  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; }
   .shots figure { margin: 0; }
-  .shots img { width: 100%; border-radius: 10px; border: 1px solid var(--border); }
-  .shots figcaption { color: var(--muted); font-size: 14px; margin-top: 6px; }
-  footer { border-top: 1px solid var(--border); margin-top: 40px; padding: 26px 0 40px; color: var(--muted); font-size: 14px; }
-  @media (max-width: 800px) { .hero { grid-template-columns: 1fr; } header.top nav a.hide { display: none; } }
+  .shots img { width: 100%; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 8px 28px rgba(0,0,0,.18); }
+  .shots figcaption { color: var(--muted); font-size: 14px; margin-top: 8px; text-align: center; }
+
+  pre { background: var(--code); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; overflow-x: auto; font-size: 14px; }
+  code { font-family: Consolas, "Cascadia Mono", monospace; }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; }
+  .cols h3 { margin: 0 0 8px; }
+
+  .cta2 { text-align: center; margin: 56px 0 10px; padding: 40px 20px; border-radius: 20px; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+  .cta2 h2 { color: #fff; margin-bottom: 14px; }
+  .cta2 .btn { display: inline-flex; align-items: center; gap: 9px; margin: 6px; padding: 12px 22px; border-radius: 11px; background: #fff; color: #0b1220; font-weight: 700; text-decoration: none; }
+  .cta2 .btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+  footer { border-top: 1px solid var(--border); margin-top: 50px; padding: 28px 0 44px; color: var(--muted); font-size: 14px; text-align: center; }
+
+  @media (max-width: 700px) { .dl { grid-template-columns: 1fr; } .bar nav a.link { display: none; } .hero { padding-top: 48px; } }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="top">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-github" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></symbol>
+</svg>
+
+<header class="bar">
+  <div class="wrap">
     <img src="favicon.svg" alt="">
     <strong>OMSI-Tools-NG</strong>
     <nav>
-      <a class="hide" href="#features">Features</a>
-      <a class="hide" href="#screenshots">Screenshots</a>
-      <a class="hide" href="#build">Build</a>
-      <button class="theme" id="theme" type="button">Theme</button>
+      <a class="link" href="#download">Download</a>
+      <a class="link" href="#features">Features</a>
+      <a class="link" href="#screenshots">Screenshots</a>
+      <a class="link" href="#build">Build</a>
+      <a class="iconbtn" href="https://github.com/rafaelkaiz/OMSI-Tools-NG" rel="noopener"><svg><use href="#i-github"/></svg>GitHub</a>
+      <button class="iconbtn" id="theme" type="button">Theme</button>
     </nav>
-  </header>
-
-  <div class="hero">
-    <div>
-      <h1>Find missing content. Clean up the rest.</h1>
-      <p class="lead">A modern, fast rewrite of the map verification and cleanup tools of OMSI-Tools, for <strong>OMSI 2</strong>, <strong>neoOMSI</strong> and <strong>openOMSI</strong>.</p>
-      <div class="cta">
-        <a class="btn primary" href="#build">Build from source</a>
-        <a class="btn" href="#features">What it does</a>
-      </div>
-      <p class="langs">English · Español · Deutsch · Polski · Čeština · Français &nbsp;|&nbsp; light and dark theme</p>
-    </div>
-    <img class="shot" src="img/map-verification.png" alt="Map verification showing no missing files for a neoOMSI map">
   </div>
+</header>
 
-  <section id="features">
-    <h2>Features</h2>
-    <div class="grid">
-      <div class="card">
-        <h3>Map verification</h3>
-        <p>Scans <code>global.cfg</code>, tiles (including Chrono), ground textures, parklists, humans, AI lists and trains, and reports every missing file by type, with the files that reference it.</p>
+<main>
+  <div class="wrap">
+    <div class="hero">
+      <img class="logo" src="favicon.svg" alt="OMSI-Tools-NG logo">
+      <h1>Find missing content.<br><span>Clean up the rest.</span></h1>
+      <p class="lead">A very fast, modern rewrite of the map verification and cleanup tools of OMSI-Tools, for <strong>OMSI 2</strong>, <strong>neoOMSI</strong> and <strong>openOMSI</strong>.</p>
+      <div class="chips">
+        <span class="chip"><b>⚡ Very fast</b> – 7,500 files in ~2 s</span>
+        <span class="chip"><b>Read-only</b> scans</span>
+        <span class="chip"><b>6</b> languages</span>
+        <span class="chip"><b>Light</b> &amp; <b>dark</b></span>
+        <span class="chip"><b>Free</b> · GPL v2</span>
       </div>
-      <div class="card rule">
-        <h3>One content pool</h3>
-        <p>A file counts as present if it exists in <em>any</em> configured directory. A neoOMSI map using an object that lives in OMSI 2 is valid.</p>
+
+      <div id="download" class="dl">
+        <a class="card win" id="dl-win" href="https://github.com/rafaelkaiz/OMSI-Tools-NG/releases/latest">
+          <span class="os">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#0a84ff" d="M2 4.6l8.4-1.15v8.1H2zM11.5 3.3L22 1.8v9.75H11.5zM2 12.45h8.4v8.1L2 19.4zM11.5 12.45H22v9.75l-10.5-1.45z"/></svg>
+          </span>
+          <span><span class="t1">Download for Windows</span><br><span class="t2" id="win-meta">Windows 10 / 11 · x64 · .zip</span></span>
+          <span class="go">↓</span>
+        </a>
+        <a class="card lin" id="dl-lin" href="https://github.com/rafaelkaiz/OMSI-Tools-NG/releases/latest">
+          <span class="os">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <ellipse cx="32" cy="38" rx="17" ry="21" fill="#23262d"/>
+              <ellipse cx="32" cy="42" rx="10.5" ry="15" fill="#f4f4f4"/>
+              <circle cx="32" cy="18" r="11" fill="#23262d"/>
+              <circle cx="27.5" cy="16" r="2.6" fill="#fff"/><circle cx="36.5" cy="16" r="2.6" fill="#fff"/>
+              <circle cx="27.5" cy="16.3" r="1.1" fill="#111"/><circle cx="36.5" cy="16.3" r="1.1" fill="#111"/>
+              <path d="M26 21.5q6-3 12 0q-2 5.5-6 5.5t-6-5.5z" fill="#ffb020"/>
+              <ellipse cx="22" cy="58.5" rx="9" ry="4.2" fill="#ffb020"/><ellipse cx="42" cy="58.5" rx="9" ry="4.2" fill="#ffb020"/>
+              <path d="M15 34q-7 8-3 17q4-2 7-8z M49 34q7 8 3 17q-4-2-7-8z" fill="#23262d"/>
+            </svg>
+          </span>
+          <span><span class="t1">Download for Linux</span><br><span class="t2" id="lin-meta">x86_64 · .tar.gz · needs GTK 3</span></span>
+          <span class="go">↓</span>
+        </a>
       </div>
-      <div class="card">
-        <h3>Safe cleanup</h3>
-        <p>Finds unused Sceneryobjects, Splines and Vehicles folders. It previews first; nothing is changed until you confirm, and folders are moved or sent to the recycle bin – never hard-deleted.</p>
-      </div>
-      <div class="card">
-        <h3>Fast and read-only</h3>
-        <p>A map with 7,500 referenced files is verified in about 2 seconds; analysing 51 maps for cleanup takes about 20 seconds. Scans never write to your installs and run on a worker thread with progress and cancel.</p>
-      </div>
-      <div class="card">
-        <h3>OMSI file formats done right</h3>
-        <p>Windows-1252 and UTF-16/UTF-8 (BOM) text files, backslash paths and any capitalisation – the same on every platform.</p>
-      </div>
-      <div class="card">
-        <h3>Rust core, Slint UI</h3>
-        <p>A UI-free <code>core</code> library with unit tests, and a small native app with six languages and light/dark themes.</p>
-      </div>
+      <p class="under">
+        <span id="ver">Version 1.1.0</span> ·
+        <a href="https://github.com/rafaelkaiz/OMSI-Tools-NG/releases">All releases</a> ·
+        <a href="https://github.com/rafaelkaiz/OMSI-Tools-NG/blob/main/CHANGELOG.md">Changelog</a>
+      </p>
+
+      <img class="shot-main" src="img/map-verification.png" alt="Map verification showing no missing files for a neoOMSI map">
     </div>
-  </section>
 
-  <section id="screenshots">
-    <h2>Screenshots</h2>
-    <div class="shots">
-      <figure><img src="img/cleanup.png" alt="Cleanup with separate Sceneryobjects, Splines and Vehicles lists" loading="lazy"><figcaption>Cleanup – Sceneryobjects, Splines and Vehicles</figcaption></figure>
-      <figure><img src="img/home.png" alt="Home screen" loading="lazy"><figcaption>Home screen</figcaption></figure>
-    </div>
-  </section>
+    <section id="features">
+      <h2>Everything you need, nothing you don't</h2>
+      <p class="sub">Two focused tools, built on a Rust core that is covered by unit tests.</p>
+      <div class="grid">
+        <div class="card speed">
+          <div class="ic">⚡</div>
+          <h3>Extremely fast</h3>
+          <p>A native Rust scanner on a worker thread: the UI never freezes, and a big map is checked in about two seconds.</p>
+        </div>
+        <div class="card">
+          <div class="ic">🔍</div>
+          <h3>Map verification</h3>
+          <p>Scans <code>global.cfg</code>, tiles (including Chrono), ground textures, parklists, humans, AI lists and trains, and reports every missing file by type with the files that reference it.</p>
+        </div>
+        <div class="card">
+          <div class="ic">🧩</div>
+          <h3>One content pool</h3>
+          <p>A file counts as present if it exists in <em>any</em> configured directory. A neoOMSI map that uses an object from OMSI 2 is valid.</p>
+        </div>
+        <div class="card">
+          <div class="ic">🧹</div>
+          <h3>Safe cleanup</h3>
+          <p>Unused Sceneryobjects, Splines and Vehicles in three separate lists. Preview first, then move to a folder or the recycle bin – nothing is ever hard-deleted. Follows references between folders and skips the nEditor folders.</p>
+        </div>
+        <div class="card">
+          <div class="ic">🔒</div>
+          <h3>Read-only scanning</h3>
+          <p>Scans never write to your installs. Windows-1252, UTF-16 and UTF-8 text files, backslash paths and any capitalisation are handled the same on every platform.</p>
+        </div>
+        <div class="card">
+          <div class="ic">🌍</div>
+          <h3>Six languages, two themes</h3>
+          <p>English, Español, Deutsch, Polski, Čeština and Français, with a light and a dark theme.</p>
+        </div>
+      </div>
 
-  <section id="build">
-    <h2>Build and run</h2>
-    <p>You need a recent stable Rust toolchain.</p>
+      <div class="stats">
+        <div class="stat"><b>~2 s</b><span>to verify a map with 7,500 referenced files</span></div>
+        <div class="stat"><b>~20 s</b><span>to analyse 51 maps and ~120 GB for cleanup</span></div>
+        <div class="stat"><b>0</b><span>files ever hard-deleted</span></div>
+      </div>
+      <p class="note">Release build, measured on a real OMSI 2 + neoOMSI installation; your times will vary.</p>
+    </section>
+
+    <section id="screenshots">
+      <h2>Screenshots</h2>
+      <p class="sub">The same clean interface on Windows and Linux.</p>
+      <div class="shots">
+        <figure><img src="img/home.png" alt="Home screen" loading="lazy"><figcaption>Home</figcaption></figure>
+        <figure><img src="img/cleanup.png" alt="Cleanup with separate Sceneryobjects, Splines and Vehicles lists" loading="lazy"><figcaption>Cleanup – Sceneryobjects, Splines and Vehicles</figcaption></figure>
+      </div>
+    </section>
+
+    <section id="build">
+      <h2>Build from source</h2>
+      <p class="sub">You need a recent stable Rust toolchain.</p>
+      <div class="cols">
+        <div>
+          <h3>Windows</h3>
 <pre><code>cargo test
 cargo run -p app</code></pre>
-    <p>Command line, read-only:</p>
-<pre><code>cargo run -p omsi-tools-core --example scan -- "C:\...\OMSI 2" "C:\...\OMSI 2\neoOMSI" - "Map name"
-cargo run -p omsi-tools-core --example cleanup_preview -- "C:\...\OMSI 2" "C:\...\OMSI 2\neoOMSI"</code></pre>
-  </section>
+        </div>
+        <div>
+          <h3>Linux (Debian / Ubuntu)</h3>
+<pre><code>sudo apt install pkg-config libfontconfig1-dev \
+  libxkbcommon-dev libgtk-3-dev
+cargo run -p app</code></pre>
+        </div>
+      </div>
+    </section>
 
-  <footer>
+    <div class="cta2">
+      <h2>Ready to check your maps?</h2>
+      <a class="btn" href="#download">Download</a>
+      <a class="btn" href="https://github.com/rafaelkaiz/OMSI-Tools-NG" rel="noopener"><svg><use href="#i-github"/></svg>Star on GitHub</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
     <p><strong>OMSI-Tools-NG</strong> is a Rust rewrite derived from <a href="https://github.com/pietr26/OMSI-Tools">OMSI-Tools</a> by <strong>pietr26</strong> and is released under the GNU General Public License v2.0. Not affiliated with the developers of OMSI, neoOMSI or openOMSI.</p>
-  </footer>
-</div>
+    <p><a href="https://github.com/rafaelkaiz/OMSI-Tools-NG">GitHub</a> · <a href="https://github.com/rafaelkaiz/OMSI-Tools-NG/releases">Releases</a> · <a href="https://github.com/rafaelkaiz/OMSI-Tools-NG/blob/main/LICENSE">License</a></p>
+  </div>
+</footer>
+
 <script>
   (function () {
     var root = document.documentElement, btn = document.getElementById('theme');
@@ -152,6 +281,25 @@ cargo run -p omsi-tools-core --example cleanup_preview -- "C:\...\OMSI 2" "C:\..
       try { localStorage.setItem('theme', next); } catch (e) {}
       label();
     });
+
+    // Point the download buttons at the latest stable release.
+    function mb(n) { return (n / 1048576).toFixed(1) + ' MB'; }
+    fetch('https://api.github.com/repos/rafaelkaiz/OMSI-Tools-NG/releases/latest')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (rel) {
+        if (!rel) return;
+        document.getElementById('ver').textContent = 'Version ' + rel.tag_name.replace(/^v/, '');
+        (rel.assets || []).forEach(function (a) {
+          if (/windows/.test(a.name)) {
+            document.getElementById('dl-win').href = a.browser_download_url;
+            document.getElementById('win-meta').textContent = 'Windows 10 / 11 · x64 · .zip · ' + mb(a.size);
+          } else if (/linux/.test(a.name)) {
+            document.getElementById('dl-lin').href = a.browser_download_url;
+            document.getElementById('lin-meta').textContent = 'x86_64 · .tar.gz · ' + mb(a.size) + ' · needs GTK 3';
+          }
+        });
+      })
+      .catch(function () {});
   })();
 </script>
 </body>
