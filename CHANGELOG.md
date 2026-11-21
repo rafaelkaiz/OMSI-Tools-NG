@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0
+
+### New
+- Linux build (x86_64), built and published by GitHub Actions.
+- Cleanup never reports the `nEditor`, `nEditorGenerated` and `nEditorThumbnails` folders of Sceneryobjects and Splines.
+- Cleanup also follows relative references (e.g. `..Scriptsdoor.osc`) between folders, so shared script folders are not reported as unused.
+
 ## 1.1.0-beta.2
 
 ### New
