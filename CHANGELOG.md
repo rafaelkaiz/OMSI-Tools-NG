@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0-beta.1
+
+### New
+- Linux build (x86_64): the same map verification and cleanup, built and published by GitHub Actions.
+- Continuous integration: tests and a release build run on every push.
+
 ## 1.0.0
 
 ### New

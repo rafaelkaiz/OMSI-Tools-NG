@@ -25,12 +25,13 @@
 - **Directories** – OMSI 2 (main), plus optional neoOMSI and openOMSI. Scans are strictly read-only.
 - **Languages** – English (default), Español, Deutsch, Polski, Čeština, Français.
 - **Themes** – light and dark (follows the system until you choose).
+- **Platforms** – Windows (x64) and Linux (x64, beta). OMSI itself runs on Linux through Proton/Wine; point the directories at your OMSI folders.
 
 Website: [`docs/index.html`](docs/index.html) (static, can be served with GitHub Pages from `/docs`).
 
 ## Build and run
 
-You need a recent stable Rust toolchain.
+You need a recent stable Rust toolchain. On Linux, install `pkg-config`, `libfontconfig1-dev`, `libxkbcommon-dev` and `libgtk-3-dev` first (Debian/Ubuntu names).
 
 ```
 cargo test
