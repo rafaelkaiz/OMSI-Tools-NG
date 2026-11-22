@@ -62,7 +62,7 @@ Adding or changing a translation: edit `app/lang/strings.txt` (one line per stri
 
 ## Attribution and licence
 
-This project is derived from OMSI-Tools (C++/Qt) by **pietr26** and from its fork OMSI-Tools-NG. The
+This project is derived from OMSI-Tools (C++/Qt) by **pietr26**. The
 file formats, parsing rules and the scan/cleanup behaviour were ported from that code base, so the
 original credit is kept and the project is released under the **GNU General Public License v2.0**
 (see [`LICENSE`](LICENSE)).
